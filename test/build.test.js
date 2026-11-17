@@ -41,6 +41,15 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
   assert.equal(status.counts['movie/tc-new'], 288);
   assert.equal(status.padded.movie, 0);
 
+  // new status fields: newest release date in New, and per catalogue pass contributions
+  assert.deepEqual(status.newestNew, { movie: '2026-11-17', series: '2026-11-17' });
+  for (const type of ['movie', 'series']) {
+    assert.deepEqual(status.contributions[`${type}/tc-new`], { P: 0, New: 288, Popular: 0, genreRule: 0 });
+    assert.deepEqual(status.contributions[`${type}/tc-popular`], { P: 0, New: 0, Popular: 288, genreRule: 0 });
+    // 38 P hits, the New-pass title 1001, and id 5001 admitted by the genre rule alone
+    assert.deepEqual(status.contributions[`${type}/tc-trending`], { P: 38, New: 1, Popular: 0, genreRule: 1 });
+  }
+
   const read = async (rel) => JSON.parse(await readFile(join(p.distDir, rel), 'utf8')).metas;
   const pages = async (type, id) => [
     ...(await read(`catalog/${type}/${id}.json`)),

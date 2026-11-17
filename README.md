@@ -8,7 +8,7 @@ Status: not yet run against the real TMDB API. Not yet tested on a device.
 
 ## What counts as true crime
 
-Per type, the universe is the union of two TMDB discover queries, deduplicated by TMDB id: Documentary AND Crime (genres 99,80), and Documentary with the keyword "true crime" (id 33722). Titles need a poster and an IMDb id. At the start of each build the keyword id is checked against `/search/keyword`; if 33722 is not "true crime" the build stops.
+Two discover queries define it: Documentary AND Crime (genres 99,80), and Documentary with the keyword "true crime" (id 33722). Each query is run in three passes of up to 10 pages: by popularity (used for Trending padding and membership), by release date newest first up to today (the **New** catalogue), and by vote count (the **Popular** catalogue). So New can hold recent titles that nobody has voted on or watched much. Trending keeps a title from TMDB's weekly trending list if its genres include both 99 and 80, or it appears in any of the three passes. Titles need a poster and an IMDb id. At the start of each build the keyword id is checked against `/search/keyword`; if 33722 is not "true crime" the build stops.
 
 ## Commands
 
@@ -26,7 +26,7 @@ Needs Node 20.6 or newer. `npm run build` uses `node --env-file=.env.local` and 
 
 `manifest.json`, `index.html`, `status.json`, `catalog/{type}/{id}.json` (first 100), `catalog/{type}/{id}/skip=100.json`, `skip=200.json`.
 
-`status.json` records build time, items per catalogue, items skipped for having no IMDb id, and how many Trending slots were padded.
+`status.json` records build time, items per catalogue, items skipped for having no IMDb id, how many Trending slots were padded, the newest release date in New (per type), and per catalogue how many items each pass contributed.
 
 ## Failure behaviour
 

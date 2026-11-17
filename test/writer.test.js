@@ -17,6 +17,8 @@ const plan = (n) =>
   planOutput({
     version: '1.2.3', builtAt: '2026-11-17T00:00:00.000Z', catalogs: cats(n),
     skippedNoImdb: { movie: 4, series: 2 }, padded: { movie: 0, series: 5 },
+    newestNew: { movie: '2026-11-16', series: null },
+    contributions: { 'movie/tc-new': { P: 1, New: 25, Popular: 2, genreRule: 0 } },
   });
 
 test('manifest shape', () => {
@@ -75,6 +77,8 @@ test('status.json has build time, counts, skipped and padded', () => {
   assert.equal(Object.keys(s.counts).length, 6);
   assert.deepEqual(s.skippedNoImdb, { movie: 4, series: 2 });
   assert.deepEqual(s.padded, { movie: 0, series: 5 });
+  assert.deepEqual(s.newestNew, { movie: '2026-11-16', series: null });
+  assert.deepEqual(s.contributions['movie/tc-new'], { P: 1, New: 25, Popular: 2, genreRule: 0 });
 });
 
 test('index.html carries the TMDB attribution line and install link code', () => {

@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
 import { confirmKeyword, buildPass, fetchTrending, qualifyTrending } from './universe.js';
-import { buildTrending, buildNew, buildPopular } from './lists.js';
+import { buildTrending, buildNew, buildPopular, contributions } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
 
@@ -65,6 +65,8 @@ export async function runBuild({
   const catalogs = {};
   const skippedNoImdb = {};
   const padded = {};
+  const newestNew = {};
+  const contribution = {};
   for (const kind of kinds) {
     const type = STREMIO_TYPE[kind];
     const attach = (list) =>
@@ -76,10 +78,21 @@ export async function runBuild({
     skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
     const trend = buildTrending(attach(trending), attach(P));
     padded[type] = trend.padded;
+    const newItems = buildNew(attach(N), today);
+    const popularItems = buildPopular(attach(V));
+    const passSets = {
+      P: new Set(P.map((it) => it.id)),
+      New: new Set(N.map((it) => it.id)),
+      Popular: new Set(V.map((it) => it.id)),
+    };
+    newestNew[type] = newItems[0]?.date ?? null;
+    contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
+    contribution[`${type}/tc-new`] = contributions(newItems, passSets);
+    contribution[`${type}/tc-popular`] = contributions(popularItems, passSets);
     catalogs[type] = {
       'tc-trending': toMetas(trend.items),
-      'tc-new': toMetas(buildNew(attach(N), today)),
-      'tc-popular': toMetas(buildPopular(attach(V))),
+      'tc-new': toMetas(newItems),
+      'tc-popular': toMetas(popularItems),
     };
     log(
       `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
@@ -96,6 +109,8 @@ export async function runBuild({
     catalogs,
     skippedNoImdb,
     padded,
+    newestNew,
+    contributions: contribution,
   });
   await writeDist(distDir, files);
   log(`wrote ${files.size} files to dist/`);
