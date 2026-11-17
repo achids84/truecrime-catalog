@@ -2,6 +2,7 @@
 // Per kind, the two discover passes return disjoint id ranges so tests can tell them apart:
 //   P (popularity.desc):      a = 1..200,       b = 101..300     (high popularity)
 //   N (release date desc):    a = 1001..1200,   b = 1101..1300   (recent, LOW popularity)
+//   Recent (tv only, air_date.gte): a = 2001..2060, b = 2101..2160 (OLD first air date, low popularity)
 // Trending slot s < trendingHits is P id 300-s (genre [99]); slot trendingHits is N id 1001
 // (in the union, genre [99]); slot trendingHits+1 is id 5001 (genre [99,80], in no pass);
 // every other slot is a stranger (90000+s, genre [99,35]) that must not qualify.
@@ -18,7 +19,11 @@ function discoverItem(id, sort, lte) {
   let date;
   let popularity;
   let vote_count;
-  if (sort === 'popularity.desc') {
+  if (sort === 'recent') {
+    date = `2025-0${1 + (id % 9)}-10`; // first aired long ago, a new season airing now
+    popularity = id / 1000;
+    vote_count = 1;
+  } else if (sort === 'popularity.desc') {
     date = id % 7 === 0 ? '2027-03-01' : `20${10 + (id % 15)}-0${1 + (id % 9)}-1${id % 9}`;
     popularity = 1000 - id;
     vote_count = (id * 37) % 500;
@@ -41,10 +46,10 @@ function discoverItem(id, sort, lte) {
   };
 }
 
-// `opts.fail` forces every request to return that status. `nullEvery`: ids divisible by it
+// `opts.fail` forces every request to return that status; `failTv` does so for /tv/{id} only. `nullEvery`: ids divisible by it
 // have no IMDb id.
 export function fakeTmdb(opts = {}) {
-  const { trendingHits = 40, fail = null, keywordName = 'true crime', nullEvery = 25 } = opts;
+  const { trendingHits = 40, fail = null, keywordName = 'true crime', nullEvery = 25, failTv = null, tvDetail = null } = opts;
   return (u) => {
     if (fail) return jsonRes({}, fail);
     const path = u.pathname.replace(/^\/3/, '');
@@ -58,8 +63,11 @@ export function fakeTmdb(opts = {}) {
       const lte = q.get('primary_release_date.lte') ?? q.get('first_air_date.lte');
       const isB = Boolean(q.get('with_keywords'));
       if (sort !== 'popularity.desc' && !sort.endsWith('date.desc')) return jsonRes({}, 400); // no other sort is used
-      const base = sort === 'popularity.desc' ? (isB ? 100 : 0) : isB ? 1100 : 1000;
-      const results = Array.from({ length: 20 }, (_, i) => discoverItem(pageIds(base, page, i), sort, lte));
+      const recent = q.has('air_date.gte');
+      const base = recent ? (isB ? 2100 : 2000) : sort === 'popularity.desc' ? (isB ? 100 : 0) : isB ? 1100 : 1000;
+      const results = Array.from({ length: 20 }, (_, i) =>
+        discoverItem(pageIds(base, page, i), recent ? 'recent' : sort, lte),
+      );
       return { page, total_pages: 50, results };
     }
 
@@ -84,6 +92,27 @@ export function fakeTmdb(opts = {}) {
     if (m) {
       const id = Number(m[2]);
       return { id, imdb_id: nullEvery && id % nullEvery === 0 ? '' : `tt${1000000 + id}` };
+    }
+    // /tv/{id}: details used by the series New sort.
+    //   Recent ids (2001+): old first_air_date, last_air_date in Nov 2026, Returning Series.
+    //   N ids (1001..1300): last == first; every 10th has a null last_air_date; even ids Ended.
+    //   Others: Ended, last == first.
+    m = path.match(/^\/tv\/(\d+)$/);
+    if (m) {
+      if (failTv) return jsonRes({}, failTv);
+      const id = Number(m[1]);
+      if (tvDetail) return tvDetail(id);
+      if (id >= 2000 && id < 3000) {
+        return { id, first_air_date: discoverItem(id, 'recent').first_air_date, last_air_date: `2026-11-${pad(1 + (id % 17))}`, status: 'Returning Series' };
+      }
+      const first = discoverItem(id, id >= 1000 && id < 2000 ? 'new' : 'popularity.desc').first_air_date;
+      const isN = id >= 1000 && id < 2000;
+      return {
+        id,
+        first_air_date: first,
+        last_air_date: isN && id % 10 === 0 ? null : first,
+        status: isN && id % 2 === 1 ? 'Returning Series' : 'Ended',
+      };
     }
     return jsonRes({}, 404);
   };

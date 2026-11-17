@@ -101,12 +101,13 @@ export async function runBuild({
     const passSets = {
       P: new Set(P.map((it) => it.id)),
       New: new Set(N.map((it) => it.id)),
-      ...(kind === 'tv' ? { Recent: new Set(R.map((it) => it.id)) } : {}),
     };
+    // Recent is counted for the New catalogue only, so Trending's status entry is unchanged
+    const newPassSets = kind === 'tv' ? { ...passSets, Recent: new Set(R.map((it) => it.id)) } : passSets;
     // newest first-air/release date in the list (for movies, the first item, as before)
     newestNew[type] = newItems.reduce((m, it) => (it.date > m ? it.date : m), '') || null;
     contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
-    contribution[`${type}/tc-new`] = contributions(newItems, passSets);
+    contribution[`${type}/tc-new`] = contributions(newItems, newPassSets);
     catalogs[type] = {
       'tc-trending': toMetas(trend.items),
       'tc-new': toMetas(newItems),
