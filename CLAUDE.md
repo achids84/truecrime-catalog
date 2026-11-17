@@ -8,6 +8,7 @@ Static Stremio addon (true crime documentaries). A Node build script reads TMDB 
 - Secret: `TMDB_TOKEN` (TMDB v4 Read Access Token) from env or gitignored `.env.local`. Never log it, never print URLs carrying a key, never commit it.
 - A failed build must exit non-zero and write nothing to `dist/`.
 - `data/idmap.json` is committed; everything else generated is not.
+- Catalogues: only `tc-trending` and `tc-new` per type (Popular was removed in 0.1.1; do not reintroduce `tc-popular`). Discover passes: P (popularity) and New (release date).
 - Commit per step; add files by name, never `git add -A`.
 
 ## Layout
