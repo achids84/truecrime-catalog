@@ -6,7 +6,7 @@ Branch `addon-5b`, from `main` at 10833c6. Unit-tested against a mocked TMDB plu
 
 `tc-new` for series was ordered by first air date, so a show with a new season airing now stayed buried (ADDON-5a: Harlan Coben's Final Twist at rank 108, Toxic at 174). The pool came only from discover sorted by first air date, so such shows could also be missing.
 
-## Change
+## Change (5b; parts superseded, see the 5c section: tc-new sort reverted, window 90 days)
 
 - `src/tvdates.js` (new): `/tv/{id}` lookup and cache in `data/tvdates.json` (`first_air_date`, `last_air_date`, `status`, `checkedAt`). Ended and Canceled are cached for good, other statuses and missing entries are fetched every build. A failed lookup keeps the cached entry or none; it never throws.
 - `src/universe.js`: `buildRecentPass` (tv only): `air_date.gte` = today minus 120 days, same genre/keyword sets, popularity, 3 pages per query. `unionById`. The pass is not part of the Trending union.
