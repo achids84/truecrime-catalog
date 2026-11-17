@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
-import { confirmKeyword, buildPass, buildRecentPass, unionById, fetchTrending, qualifyTrending } from './universe.js';
+import { confirmKeyword, buildPass, buildRecentPass, buildExtraPass, buildExtraRecentPass, unionById, fetchTrending, qualifyTrending } from './universe.js';
 import { loadTvDates, saveTvDates, resolveTvDates, resolveCinemeta, sortKey } from './tvdates.js';
 import { createCinemeta } from './cinemeta.js';
 import { buildTrending, buildNew, buildRecent, contributions } from './lists.js';
@@ -37,17 +37,22 @@ export async function runBuild({
   const passes = {}; // passes[kind] = { P, N, trending }
   await Promise.all(
     kinds.map(async (kind) => {
-      const [P, N, trendingRaw, R] = await Promise.all([
+      const [P, N, trendingRaw, R, XP, XN, XR] = await Promise.all([
         buildPass(client, kind, 'popularity', today),
         buildPass(client, kind, 'new', today),
         fetchTrending(client, kind),
         kind === 'tv' ? buildRecentPass(client, today) : [],
+        buildExtraPass(client, kind, 'popularity', today),
+        buildExtraPass(client, kind, 'new', today),
+        kind === 'tv' ? buildExtraRecentPass(client, today) : [],
       ]);
       // R (series recent-airing pass) widens the New pool only. It stays out of the union so
       // Trending membership is exactly what it was.
       const unionIds = new Set([...P, ...N].map((it) => it.id));
       const trending = qualifyTrending(kind, trendingRaw, unionIds);
-      passes[kind] = { P, N, R, trending };
+      // XP, XN, XR (extra keyword sets) are kept out of unionIds and out of the padding source (P),
+      // so tc-trending is built from exactly the inputs main uses.
+      passes[kind] = { P, N, R, XP, XN, XR, trending };
       log(`${kind}: P ${P.length}, New ${N.length}${kind === 'tv' ? `, Recent ${R.length}` : ''}, trending qualified ${trending.length}`);
     }),
   );
@@ -55,8 +60,8 @@ export async function runBuild({
   // IMDb ids are resolved once for every distinct title in any pass or in Trending.
   const pool = {}; // pool[kind] = Map(tmdb id -> item)
   for (const kind of kinds) {
-    const { P, N, R, trending } = passes[kind];
-    pool[kind] = new Map([...P, ...N, ...R, ...trending].map((it) => [it.id, it]));
+    const { P, N, R, XP, XN, XR, trending } = passes[kind];
+    pool[kind] = new Map([...P, ...N, ...R, ...XP, ...XN, ...XR, ...trending].map((it) => [it.id, it]));
   }
   const idmap = await loadIdMap(idmapPath);
   const { fetched } = await resolveImdbIds(
@@ -85,19 +90,19 @@ export async function runBuild({
         const imdb = lookup(idmap, kind, it.id);
         return imdb ? [{ ...it, imdb }] : [];
       });
-    const { P, N, R, trending } = passes[kind];
+    const { P, N, R, XP, XN, XR, trending } = passes[kind];
     skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
     const trend = buildTrending(attach(trending), attach(P));
     padded[type] = trend.padded;
     // tc-new is exactly what main builds: the New pass only, sorted by first air date.
     // (The recent pass and the date cache never feed it.)
-    const newPool = attach(N);
+    const newPool = attach(unionById(N, XN)); // N plus the extra keyword sets
     let recent = null;
     if (kind === 'tv') {
       // tc-recent: every series pool (New, P, recent pass), last air date else first air date.
-      const datePool = attach(unionById(N, P, R));
-      const known = new Set([...P, ...N].map((it) => it.id));
-      seriesNew.recentAdded = R.filter((it) => !known.has(it.id)).length;
+      const datePool = attach(unionById(N, XN, P, XP, R, XR));
+      const known = new Set([...P, ...N, ...XP, ...XN].map((it) => it.id));
+      seriesNew.recentAdded = [...R, ...XR].filter((it) => !known.has(it.id)).length;
       const { fetched, failed } = await resolveTvDates(datePool, tvDates, client, now);
       // Cinemeta: the newest released episode, for series that are not Ended or Canceled.
       const cin = await resolveCinemeta(datePool, tvDates, createCinemeta({ fetchImpl: cinemetaFetch }), now);
@@ -117,16 +122,20 @@ export async function runBuild({
       P: new Set(P.map((it) => it.id)),
       New: new Set(N.map((it) => it.id)),
     };
+    const poolSets = {
+      P: new Set([...P, ...XP].map((it) => it.id)),
+      New: new Set([...N, ...XN].map((it) => it.id)),
+    };
     newestNew[type] = newItems[0]?.date ?? null;
     contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
-    contribution[`${type}/tc-new`] = contributions(newItems, passSets);
+    contribution[`${type}/tc-new`] = contributions(newItems, poolSets);
     catalogs[type] = {
       'tc-trending': toMetas(trend.items),
       'tc-new': toMetas(newItems),
     };
     if (recent) {
       catalogs[type]['tc-recent'] = toMetas(recent.items);
-      contribution[`${type}/tc-recent`] = contributions(recent.items, { ...passSets, Recent: new Set(R.map((it) => it.id)) });
+      contribution[`${type}/tc-recent`] = contributions(recent.items, { ...poolSets, Recent: new Set([...R, ...XR].map((it) => it.id)) });
     }
     log(
       `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
