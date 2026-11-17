@@ -28,7 +28,7 @@ test('manifest shape', () => {
   assert.equal(m.name, 'True Crime Documentaries');
   assert.deepEqual(m.resources, ['catalog']);
   assert.deepEqual(m.types, ['movie', 'series']);
-  assert.equal(m.catalogs.length, 4);
+  assert.equal(m.catalogs.length, 5); // 2 movie + 2 series + series tc-recent
   assert.ok(!('addonCatalogs' in m) && !('idPrefixes' in m));
 });
 
@@ -37,7 +37,7 @@ test('no tc-popular anywhere in the manifest or the planned files', () => {
   assert.ok(!JSON.stringify(m).includes('tc-popular'));
   assert.ok(!JSON.stringify(m).toLowerCase().includes('popular'));
   assert.deepEqual(m.catalogs.map((c) => `${c.type}/${c.id}`), [
-    'movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new',
+    'movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new', 'series/tc-recent',
   ]);
   const files = plan(30);
   assert.ok([...files.keys()].every((k) => !k.includes('popular')));
@@ -48,8 +48,9 @@ test('catalogue ids, names, types and extra', () => {
   const m = buildManifest('1.0.0');
   for (const type of ['movie', 'series']) {
     const mine = m.catalogs.filter((c) => c.type === type);
-    assert.deepEqual(mine.map((c) => c.id), ['tc-trending', 'tc-new']);
-    assert.deepEqual(mine.map((c) => c.name), ['Trending this week', 'New']);
+    // tc-recent ("New episodes") is series only and comes after tc-new
+    assert.deepEqual(mine.map((c) => c.id), type === 'series' ? ['tc-trending', 'tc-new', 'tc-recent'] : ['tc-trending', 'tc-new']);
+    assert.deepEqual(mine.map((c) => c.name), type === 'series' ? ['Trending this week', 'New', 'New episodes'] : ['Trending this week', 'New']);
   }
   for (const c of m.catalogs) assert.deepEqual(c.extra, [{ name: 'skip' }]); // no search, no genre
 });

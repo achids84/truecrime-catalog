@@ -29,7 +29,7 @@ Status: not yet run against the real TMDB API. Not yet tested on a device. Nothi
 
 ## Later runs
 
-The schedule `17 */6 * * *` rebuilds automatically. After each run the workflow commits `data/idmap.json` with the message `chore: id map [skip ci]`. If a build fails, the previous deployment stays live; check the Actions log. Also check `status.json` on the site for counts and padding.
+The schedule `17 */6 * * *` rebuilds automatically. After each run the workflow commits `data/idmap.json` and `data/tvdates.json` with the message `chore: id map and tv dates [skip ci]`. If a build fails, the previous deployment stays live; check the Actions log. Also check `status.json` on the site for counts and padding.
 
 ## Troubleshooting
 

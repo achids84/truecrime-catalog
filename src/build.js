@@ -5,8 +5,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
-import { confirmKeyword, buildPass, fetchTrending, qualifyTrending } from './universe.js';
-import { buildTrending, buildNew, contributions } from './lists.js';
+import { confirmKeyword, buildPass, buildRecentPass, unionById, fetchTrending, qualifyTrending } from './universe.js';
+import { loadTvDates, saveTvDates, resolveTvDates, sortKey } from './tvdates.js';
+import { buildTrending, buildNew, buildRecent, contributions } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
 
@@ -19,6 +20,7 @@ export async function runBuild({
   now = Date.now(),
   distDir = join(ROOT, 'dist'),
   idmapPath = join(ROOT, 'data', 'idmap.json'),
+  tvDatesPath = join(dirname(idmapPath), 'tvdates.json'),
   version,
   log = () => {},
 } = {}) {
@@ -33,23 +35,26 @@ export async function runBuild({
   const passes = {}; // passes[kind] = { P, N, trending }
   await Promise.all(
     kinds.map(async (kind) => {
-      const [P, N, trendingRaw] = await Promise.all([
+      const [P, N, trendingRaw, R] = await Promise.all([
         buildPass(client, kind, 'popularity', today),
         buildPass(client, kind, 'new', today),
         fetchTrending(client, kind),
+        kind === 'tv' ? buildRecentPass(client, today) : [],
       ]);
+      // R (series recent-airing pass) widens the New pool only. It stays out of the union so
+      // Trending membership is exactly what it was.
       const unionIds = new Set([...P, ...N].map((it) => it.id));
       const trending = qualifyTrending(kind, trendingRaw, unionIds);
-      passes[kind] = { P, N, trending };
-      log(`${kind}: P ${P.length}, New ${N.length}, trending qualified ${trending.length}`);
+      passes[kind] = { P, N, R, trending };
+      log(`${kind}: P ${P.length}, New ${N.length}${kind === 'tv' ? `, Recent ${R.length}` : ''}, trending qualified ${trending.length}`);
     }),
   );
 
   // IMDb ids are resolved once for every distinct title in any pass or in Trending.
   const pool = {}; // pool[kind] = Map(tmdb id -> item)
   for (const kind of kinds) {
-    const { P, N, trending } = passes[kind];
-    pool[kind] = new Map([...P, ...N, ...trending].map((it) => [it.id, it]));
+    const { P, N, R, trending } = passes[kind];
+    pool[kind] = new Map([...P, ...N, ...R, ...trending].map((it) => [it.id, it]));
   }
   const idmap = await loadIdMap(idmapPath);
   const { fetched } = await resolveImdbIds(
@@ -61,6 +66,8 @@ export async function runBuild({
   await saveIdMap(idmapPath, idmap); // cache only; dist/ is still untouched
   log(`resolved ${fetched} new IMDb ids`);
 
+  const tvDates = await loadTvDates(tvDatesPath);
+  const seriesNew = { recentAdded: 0, lookups: 0, lookupsFailed: 0, recentBeforeCap: 0, recentKeyFromFirst: 0 };
   const catalogs = {};
   const skippedNoImdb = {};
   const padded = {};
@@ -73,11 +80,28 @@ export async function runBuild({
         const imdb = lookup(idmap, kind, it.id);
         return imdb ? [{ ...it, imdb }] : [];
       });
-    const { P, N, trending } = passes[kind];
+    const { P, N, R, trending } = passes[kind];
     skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
     const trend = buildTrending(attach(trending), attach(P));
     padded[type] = trend.padded;
-    const newItems = buildNew(attach(N), today);
+    // tc-new is exactly what main builds: the New pass only, sorted by first air date.
+    // (The recent pass and the date cache never feed it.)
+    const newPool = attach(N);
+    let recent = null;
+    if (kind === 'tv') {
+      // tc-recent: every series pool (New, P, recent pass), last air date else first air date.
+      const datePool = attach(unionById(N, P, R));
+      const known = new Set([...P, ...N].map((it) => it.id));
+      seriesNew.recentAdded = R.filter((it) => !known.has(it.id)).length;
+      const { fetched, failed } = await resolveTvDates(datePool, tvDates, client, now);
+      await saveTvDates(tvDatesPath, tvDates); // cache only; dist/ is still untouched
+      seriesNew.lookups = fetched;
+      seriesNew.lookupsFailed = failed;
+      recent = buildRecent(datePool.map((it) => ({ ...it, ...sortKey(it, tvDates[it.id]) })), today);
+      seriesNew.recentBeforeCap = recent.total;
+      seriesNew.recentKeyFromFirst = recent.items.filter((it) => it.sortSource === 'first').length;
+    }
+    const newItems = buildNew(newPool, today);
     const passSets = {
       P: new Set(P.map((it) => it.id)),
       New: new Set(N.map((it) => it.id)),
@@ -89,11 +113,22 @@ export async function runBuild({
       'tc-trending': toMetas(trend.items),
       'tc-new': toMetas(newItems),
     };
+    if (recent) {
+      catalogs[type]['tc-recent'] = toMetas(recent.items);
+      contribution[`${type}/tc-recent`] = contributions(recent.items, { ...passSets, Recent: new Set(R.map((it) => it.id)) });
+    }
     log(
       `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
         `new ${catalogs[type]['tc-new'].length}, ` +
         `skipped no IMDb id ${skippedNoImdb[type]}`,
     );
+    if (kind === 'tv') {
+      log(
+        `series: recent pass added ${seriesNew.recentAdded} titles to the pool, ${seriesNew.lookups} /tv lookups ` +
+          `(${seriesNew.lookupsFailed} failed), tc-recent ${recent.items.length} of ${seriesNew.recentBeforeCap} ` +
+          `(${seriesNew.recentKeyFromFirst} keyed by first air date)`,
+      );
+    }
   }
 
   assertMinimums(catalogs); // throws before anything is written
@@ -106,6 +141,7 @@ export async function runBuild({
     padded,
     newestNew,
     contributions: contribution,
+    seriesNew,
   });
   await writeDist(distDir, files);
   log(`wrote ${files.size} files to dist/`);
