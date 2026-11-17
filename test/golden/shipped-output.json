@@ -1,0 +1,18 @@
+{
+  "_source": "sha256 of every dist file built by main@c0322af with fakeTmdb(), TODAY, version 9.9.9",
+  "catalog/movie/tc-new.json": "9d3c4ba952d89a0a5949aba272999d9e1be8d7fedf799288b1e5d2b3f6d98b55",
+  "catalog/movie/tc-new/skip=100.json": "80b8f202f8ae91e98590a5cdd2633e399d59bc82432d91dfc9c0ac92e6ce2022",
+  "catalog/movie/tc-new/skip=200.json": "80d6971a5ee1bd06e138a6646feb9aaa17e5095ac5b6d5f8627e153e1ddcfa03",
+  "catalog/movie/tc-trending.json": "cf807f6274a292c3e10ebd3f4622474b72c62b9e98036e3e37c06bc094895874",
+  "catalog/movie/tc-trending/skip=100.json": "c0da0943419f68f79ea1339fd90882a017e9bf830af2669e8ec8a5c61b4d8acf",
+  "catalog/movie/tc-trending/skip=200.json": "c0da0943419f68f79ea1339fd90882a017e9bf830af2669e8ec8a5c61b4d8acf",
+  "catalog/series/tc-new.json": "162a80bcfe018fbffe0c5cfa50b86f10d2ee7720edb7a6868f73be921bf2a0e3",
+  "catalog/series/tc-new/skip=100.json": "fc80a110d36bb95827a51ac67418cee31bb388fe56922718ecdcbd8737b9ca8e",
+  "catalog/series/tc-new/skip=200.json": "08b45df52c97ef65ad8c24a5997890e45c8f275909a8833f9e39b33786f086dd",
+  "catalog/series/tc-trending.json": "63c0568b9b20e407e413095bb77402ff7a4ae1423bc29a240fb5e4bf04a7eddf",
+  "catalog/series/tc-trending/skip=100.json": "c0da0943419f68f79ea1339fd90882a017e9bf830af2669e8ec8a5c61b4d8acf",
+  "catalog/series/tc-trending/skip=200.json": "c0da0943419f68f79ea1339fd90882a017e9bf830af2669e8ec8a5c61b4d8acf",
+  "index.html": "c2f99c7b83a4db2300b167763d0ce5bb65893332f7b988177005d2388005f692",
+  "manifest.json": "7ef67b84dd66f6b8ada361db2508c3884d8fc7a88956b9f85122679d4b99d929",
+  "status.json": "4e668a3efb1cbff0be8447d62709b27780da05fecb48a98dcf3d8d46b4b4db7d"
+}

@@ -7,10 +7,21 @@ export const PAGE_SIZE = 100;
 export const PAGES = 3; // skip=0 (no suffix), skip=100, skip=200
 export const MIN_ITEMS = 20;
 export const TYPES = ['movie', 'series'];
+// The two built-in catalogues. Kept as the default when no config is given (tests, old callers);
+// the build passes the enabled entries of config/catalogues.json instead.
 export const CATALOGS = [
-  { id: 'tc-trending', name: 'Trending this week' },
-  { id: 'tc-new', name: 'New' },
+  { id: 'tc-trending', name: 'Trending this week', kind: 'trending', types: ['movie', 'series'], enabled: true },
+  { id: 'tc-new', name: 'New', kind: 'new', types: ['movie', 'series'], enabled: true },
 ];
+
+// Catalogues of one type, in config order.
+const ofType = (catalogues, type) => catalogues.filter((c) => c.types.includes(type));
+
+// Trending and New always write 3 pages (skip=0, 100, 200). A discover catalogue writes as many
+// pages as it needs, plus one trailing partial or empty page so the client sees the end.
+export function pageCount(kind, n) {
+  return kind === 'discover' ? Math.floor(n / PAGE_SIZE) + 1 : PAGES;
+}
 export const TMDB_ATTRIBUTION =
   'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
@@ -32,10 +43,10 @@ export function buildManifest(version) {
 
 // The failure rule: every catalogue needs at least MIN_ITEMS items.
 // catalogs: { movie: { 'tc-new': [metas], ... }, series: {...} }
-export function assertMinimums(catalogs, min = MIN_ITEMS) {
+export function assertMinimums(catalogs, min = MIN_ITEMS, catalogues = CATALOGS) {
   const short = [];
   for (const type of TYPES) {
-    for (const c of CATALOGS) {
+    for (const c of ofType(catalogues, type)) {
       const n = catalogs?.[type]?.[c.id]?.length ?? 0;
       if (n < min) short.push(`${type}/${c.id}=${n}`);
     }
@@ -50,9 +61,11 @@ export function assertMinimums(catalogs, min = MIN_ITEMS) {
 // newestNew: newest release date in New, per type. contributions: per catalogue, how many
 // of its items each discover pass contributed (P = popularity pass, New; an item in
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
-export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
+export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues = CATALOGS }) {
   const counts = {};
-  for (const type of TYPES) for (const c of CATALOGS) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
+  for (const type of TYPES) {
+    for (const c of ofType(catalogues, type)) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
+  }
   return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions };
 }
 
@@ -90,16 +103,16 @@ export function renderIndexHtml() {
 }
 
 // Pure: returns Map<relativePath, string> for everything that goes into dist/.
-export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
+export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues = CATALOGS }) {
   const files = new Map();
   const json = (v) => JSON.stringify(v) + '\n';
   files.set('manifest.json', json(buildManifest(version)));
   files.set('index.html', renderIndexHtml());
-  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }), null, 2) + '\n');
+  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues }), null, 2) + '\n');
   for (const type of TYPES) {
-    for (const c of CATALOGS) {
+    for (const c of ofType(catalogues, type)) {
       const all = catalogs[type][c.id];
-      for (let p = 0; p < PAGES; p++) {
+      for (let p = 0; p < pageCount(c.kind, all.length); p++) {
         const metas = all.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE);
         const path =
           p === 0

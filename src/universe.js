@@ -106,3 +106,56 @@ export function qualifyTrending(kind, rawList, unionIds) {
   }
   return out;
 }
+
+// ---- kind "discover": one TMDB discover query per catalogue and type ----------------------
+// The true crime keyword is always ANDed in. Comma means AND on TMDB (a pipe would mean OR,
+// which this version does not support). The order TMDB returns is kept; nothing is re-sorted.
+export const DISCOVER_DEFAULT_LIMIT = 100;
+export const DISCOVER_PAGE_SIZE = 20;
+export const DISCOVER_MAX_PAGES = 25; // limit 500 / 20 per page
+const DISCOVER_OVERFETCH = 1.15; // a share of titles will lack a poster or an IMDb id
+
+const DATE_SORTS = ['primary_release_date.desc', 'first_air_date.desc'];
+
+// The two date sorts mean "newest first" for either type; each type gets its own TMDB name.
+export function discoverSort(kind, sort = 'popularity.desc') {
+  if (DATE_SORTS.includes(sort)) return PASS_SORT.new(kind);
+  return sort;
+}
+
+// today: YYYY-MM-DD. For a date sort, unreleased titles are cut off at today.
+export function discoverParams(kind, spec, today) {
+  const sort = discoverSort(kind, spec.sort);
+  const dateKey = kind === 'movie' ? 'primary_release_date' : 'first_air_date';
+  const keywords = [...new Set([KEYWORD_ID, ...(spec.keywordsAll ?? [])])];
+  const params = { sort_by: sort, with_keywords: keywords.join(',') };
+  if (spec.genresAll?.length) params.with_genres = spec.genresAll.join(',');
+  if (spec.minVotes > 0) params['vote_count.gte'] = String(spec.minVotes);
+  if (spec.language) params.with_original_language = spec.language;
+  if (spec.yearFrom != null) params[`${dateKey}.gte`] = `${spec.yearFrom}-01-01`;
+  let upper = spec.yearTo != null ? `${spec.yearTo}-12-31` : null;
+  if (DATE_SORTS.includes(spec.sort) && (!upper || upper > today)) upper = today;
+  if (upper) params[`${dateKey}.lte`] = upper;
+  return params;
+}
+
+export async function buildDiscover(client, kind, spec, today) {
+  const limit = spec.limit ?? DISCOVER_DEFAULT_LIMIT;
+  const wanted = Math.min(DISCOVER_MAX_PAGES, Math.ceil((limit * DISCOVER_OVERFETCH) / DISCOVER_PAGE_SIZE));
+  const params = { include_adult: 'false', language: 'en-US', ...discoverParams(kind, spec, today) };
+  const first = await client.get(`/discover/${kind}`, { ...params, page: 1 });
+  const last = Math.min(wanted, first.total_pages ?? 1);
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(0, last - 1) }, (_, i) =>
+      client.get(`/discover/${kind}`, { ...params, page: i + 2 }),
+    ),
+  );
+  const seen = new Set();
+  const out = [];
+  for (const raw of [first, ...rest].flatMap((p) => p.results ?? [])) {
+    if (!raw?.poster_path || seen.has(raw.id)) continue;
+    seen.add(raw.id);
+    out.push(normalize(kind, raw));
+  }
+  return out;
+}
