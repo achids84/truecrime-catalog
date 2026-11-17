@@ -15,7 +15,7 @@ async function setup() {
   const root = await mkdtemp(join(tmpdir(), 'x5e-'));
   return { root, distDir: join(root, 'dist'), idmapPath: join(root, 'data', 'idmap.json'), tvDatesPath: join(root, 'data', 'tvdates.json') };
 }
-const run = (p, fetchImpl) => runBuild({ token: 'tok', fetchImpl, now: TODAY, version: '9.9.9', sleep: async () => {}, ...p });
+const run = (p, fetchImpl) => runBuild({ token: 'tok', fetchImpl, now: TODAY, version: '9.9.9', sleep: async () => {}, excludePath: join(p.root, 'none.json'), ...p });
 const read = async (p, rel) => JSON.parse(await readFile(join(p.distDir, rel), 'utf8'));
 const discoverCalls = (f) =>
   f.calls.map((c) => new URL(c.url)).filter((u) => u.pathname.includes('/discover/'));
@@ -27,7 +27,17 @@ test('keyword list: one constant, ids and types as decided', () => {
     [210662, ['tv', 'movie']],
     [10714, ['tv', 'movie']],
     [9826, ['tv']],
+    [6019, ['tv', 'movie']],
+    [2149, ['tv', 'movie']],
+    [10175, ['tv', 'movie']],
+    [10291, ['tv', 'movie']],
+    [208458, ['tv', 'movie']],
+    [294521, ['tv']],
   ]);
+  // ADDON-5h sets: New and recent passes only. The 5e sets keep all passes.
+  for (const s of EXTRA_KEYWORD_SETS) {
+    assert.deepEqual(s.passes, [6019, 2149, 10175, 10291, 208458, 294521].includes(s.id) ? ['new', 'recent'] : undefined, String(s.id));
+  }
 });
 
 test('every extra request sends with_genres=99 and one listed keyword; murder only for tv', async () => {
@@ -38,9 +48,11 @@ test('every extra request sends with_genres=99 and one listed keyword; murder on
   assert.ok(extra.length > 0);
   for (const u of extra) assert.equal(u.searchParams.get('with_genres'), '99');
   const byKw = (kw, kind) => extra.filter((u) => u.searchParams.get('with_keywords') === String(kw) && u.pathname.endsWith(`/${kind}`));
-  assert.equal(byKw(9826, 'movie').length, 0);
-  assert.ok(byKw(9826, 'tv').length > 0);
-  for (const kw of [210662, 10714]) for (const kind of ['movie', 'tv']) assert.ok(byKw(kw, kind).length > 0, `${kw} ${kind}`);
+  for (const kw of [9826, 294521]) {
+    assert.equal(byKw(kw, 'movie').length, 0, `${kw} movie`);
+    assert.ok(byKw(kw, 'tv').length > 0, `${kw} tv`);
+  }
+  for (const kw of [210662, 10714, 6019, 2149, 10175, 10291, 208458]) for (const kind of ['movie', 'tv']) assert.ok(byKw(kw, kind).length > 0, `${kw} ${kind}`);
 });
 
 test('request counting: new passes use the 10-page cap, the recent pass 3 pages, date filter on New', async () => {
@@ -48,15 +60,18 @@ test('request counting: new passes use the 10-page cap, the recent pass 3 pages,
   const client = createClient({ token: 'tok', fetchImpl: f, sleep: async () => {} });
   await buildExtraPass(client, 'movie', 'new', TODAY_STR);
   let calls = discoverCalls(f);
-  assert.equal(calls.length, 2 * 10); // cold case + serial killer, 10 pages each
+  assert.equal(calls.length, 7 * 10); // cold case, serial killer + 5 movie sets of 5h, 10 pages each
   assert.ok(calls.every((u) => u.searchParams.get('primary_release_date.lte') === TODAY_STR));
   f.calls.length = 0;
   await buildExtraPass(client, 'tv', 'popularity', TODAY_STR);
-  assert.equal(discoverCalls(f).length, 3 * 10);
+  assert.equal(discoverCalls(f).length, 3 * 10); // 5h sets: no popularity pass
+  f.calls.length = 0;
+  await buildExtraPass(client, 'movie', 'popularity', TODAY_STR);
+  assert.equal(discoverCalls(f).length, 2 * 10);
   f.calls.length = 0;
   await buildExtraRecentPass(client, TODAY_STR);
   calls = discoverCalls(f);
-  assert.equal(calls.length, 3 * 3);
+  assert.equal(calls.length, 9 * 3); // all 9 tv sets
   assert.ok(calls.every((u) => u.searchParams.get('air_date.gte') === '2026-08-19'));
 });
 
@@ -67,9 +82,9 @@ test('dedupe across sets: an id in two sets appears once', async () => {
   const all = tv.map((it) => it.id);
   assert.equal(new Set(all).size, all.length);
   // cold case new 10301..10500, murder new 10401..10600 overlap on 100; serial killer 20301..20500
-  assert.equal(all.length, 200 + 200 + 200 - 100);
+  assert.equal(all.length, 200 + 200 + 200 - 100 + 6 * 200);
   const movie = await buildExtraPass(client, 'movie', 'new', TODAY_STR);
-  assert.equal(movie.length, 400);
+  assert.equal(movie.length, 400 + 5 * 200);
 });
 
 test('tc-trending is byte-identical with the extra sets on or off, both types', async () => {
@@ -102,7 +117,7 @@ test('movie and tv pools grow: tc-new and tc-recent contain extra-set titles, ex
   assert.equal(cOn['series/tc-trending'], cOff['series/tc-trending']);
   const mNew = ids((await read(on, 'catalog/movie/tc-new.json')).metas);
   assert.ok(mNew.some((id) => id > 10000));
-  // movies never contain a murder-only id (30001+)
-  assert.ok(mNew.every((id) => id < 30000));
+  // movies never contain a murder-only id (30001..30700) or a smuggling-only id (100001+)
+  assert.ok(mNew.every((id) => !(id > 30000 && id < 30700) && id < 100000));
   assert.equal((await read(on, 'status.json')).counts['movie/tc-recent'], undefined);
 });

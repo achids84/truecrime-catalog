@@ -1,6 +1,6 @@
 {
   "name": "truecrime-catalog",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Static Stremio addon: true crime documentaries, built from TMDB.",
   "private": true,
   "type": "module",
@@ -9,6 +9,7 @@
     "test": "node --test",
     "build": "node --env-file=.env.local src/build.js",
     "build:ci": "node src/build.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "check-exclude": "node scripts/check-exclude.js"
   }
 }

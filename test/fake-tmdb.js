@@ -7,6 +7,9 @@
 //   cold case 210662   pop 10001..10200, new 10301..10500, recent 10601..10660
 //   serial killer 10714 pop 20001..20200, new 20301..20500, recent 20601..20660
 //   murder 9826 (tv)   pop 30001..30200, new 10401..10600 (overlaps cold case new by 100), recent 30601..30660
+// ADDON-5h sets run in the new and recent passes only (a popularity request for them is a 400):
+//   6019 new 40301..40500, recent 40601..40660; 2149 50301.., 10175 60301.., 10291 70301.., 208458 80301..,
+//   294521 smuggling (tv only) 100301.., recent 100601..
 // opts.extras (default false) turns them on; off they return nothing (= the pool main builds).
 // Trending slot s < trendingHits is P id 300-s (genre [99]); slot trendingHits is N id 1001
 // (in the union, genre [99]); slot trendingHits+1 is id 5001 (genre [99,80], in no pass);
@@ -18,7 +21,14 @@ export const EXTRA_BASE = {
   210662: { popularity: 10000, new: 10300, recent: 10600 },
   10714: { popularity: 20000, new: 20300, recent: 20600 },
   9826: { popularity: 30000, new: 10400, recent: 30600 },
+  6019: { new: 40300, recent: 40600 },
+  2149: { new: 50300, recent: 50600 },
+  10175: { new: 60300, recent: 60600 },
+  10291: { new: 70300, recent: 70600 },
+  208458: { new: 80300, recent: 80600 },
+  294521: { new: 100300, recent: 100600 },
 };
+export const TV_ONLY_KEYWORDS = ['9826', '294521'];
 const pad = (n) => String(n).padStart(2, '0');
 
 function pageIds(base, page, i) {
@@ -83,7 +93,9 @@ export function fakeTmdb(opts = {}) {
       const extraBase = EXTRA_BASE[kw];
       if (kw && kw !== '33722' && !extraBase) return jsonRes({}, 400); // unknown keyword
       if (extraBase) {
-        if (path.endsWith('/movie') && kw === '9826') return jsonRes({}, 400); // murder is tv only
+        if (path.endsWith('/movie') && TV_ONLY_KEYWORDS.includes(kw)) return jsonRes({}, 400); // murder, smuggling: tv only
+        const slot = q.has('air_date.gte') ? 'recent' : sort === 'popularity.desc' ? 'popularity' : 'new';
+        if (extraBase[slot] === undefined) return jsonRes({}, 400); // 5h sets have no popularity pass
         if (q.get('with_genres') !== '99') return jsonRes({}, 400); // genre 99 is required
         if (!extras) return { page, total_pages: 1, results: [] };
       }

@@ -10,6 +10,7 @@ import { loadTvDates, saveTvDates, resolveTvDates, resolveCinemeta, sortKey } fr
 import { createCinemeta } from './cinemeta.js';
 import { buildTrending, buildNew, buildRecent, contributions } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
+import { loadExclude, excludeKey, dropExcluded } from './exclude.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -23,12 +24,16 @@ export async function runBuild({
   distDir = join(ROOT, 'dist'),
   idmapPath = join(ROOT, 'data', 'idmap.json'),
   tvDatesPath = join(dirname(idmapPath), 'tvdates.json'),
+  excludePath = join(ROOT, 'config', 'exclude.json'),
   version,
   log = () => {},
 } = {}) {
   const client = createClient({ token, fetchImpl, ...(sleep ? { sleep } : {}) });
   const today = new Date(now).toISOString().slice(0, 10);
   version ??= JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8')).version;
+
+  const exclude = await loadExclude(excludePath); // invalid file: throws before any request
+  log(`exclusion list: ${exclude.movie.size} movies, ${exclude.series.size} series`);
 
   log('checking keyword 33722');
   await confirmKeyword(client);
@@ -37,7 +42,7 @@ export async function runBuild({
   const passes = {}; // passes[kind] = { P, N, trending }
   await Promise.all(
     kinds.map(async (kind) => {
-      const [P, N, trendingRaw, R, XP, XN, XR] = await Promise.all([
+      const [P0, N0, trendingRaw, R0, XP0, XN0, XR0] = await Promise.all([
         buildPass(client, kind, 'popularity', today),
         buildPass(client, kind, 'new', today),
         fetchTrending(client, kind),
@@ -46,10 +51,13 @@ export async function runBuild({
         buildExtraPass(client, kind, 'new', today),
         kind === 'tv' ? buildExtraRecentPass(client, today) : [],
       ]);
+      // Exclusion list: applied to every pool before any list is built (padding included).
+      const ex = exclude[excludeKey(kind)];
+      const [P, N, R, XP, XN, XR] = [P0, N0, R0, XP0, XN0, XR0].map((l) => dropExcluded(l, ex));
       // R (series recent-airing pass) widens the New pool only. It stays out of the union so
       // Trending membership is exactly what it was.
       const unionIds = new Set([...P, ...N].map((it) => it.id));
-      const trending = qualifyTrending(kind, trendingRaw, unionIds);
+      const trending = dropExcluded(qualifyTrending(kind, trendingRaw, unionIds), ex);
       // XP, XN, XR (extra keyword sets) are kept out of unionIds and out of the padding source (P),
       // so tc-trending is built from exactly the inputs main uses.
       passes[kind] = { P, N, R, XP, XN, XR, trending };

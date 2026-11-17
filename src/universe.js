@@ -1,7 +1,7 @@
 // TMDB discovery passes. For each type, queries (a) and (b) are run once per pass:
 //   (a) genres 99 AND 80 (Documentary + Crime)
 //   (b) genre 99 + keyword 33722 ("true crime")
-//   (c) genre 99 + each keyword in EXTRA_KEYWORD_SETS (tc-new and tc-recent only)
+//   (c) genre 99 + each keyword in EXTRA_KEYWORD_SETS (tc-new and tc-recent only; each set lists its passes)
 // Two passes (up to 10 pages each, per query):
 //   P   popularity.desc               -> Trending padding and Trending membership
 //   N   release date desc, <= today   -> the New catalogue
@@ -11,11 +11,21 @@ export const KEYWORD_ID = 33722;
 export const KEYWORD_NAME = 'true crime';
 // Extra discover sets: genre 99 (Documentary) AND one keyword. Add or remove a keyword here, one line.
 // They feed tc-new and tc-recent only; Trending membership and padding never see them.
+export const ALL_PASSES = ['popularity', 'new', 'recent'];
+export const NEW_ONLY_PASSES = ['new', 'recent']; // no popularity pass (ADDON-5h sets)
+// `passes` (default ALL_PASSES) lists the passes a set runs in; 'recent' applies to tv only.
 export const EXTRA_KEYWORD_SETS = [
   { id: 210662, name: 'cold case', types: ['tv', 'movie'] },
   { id: 10714, name: 'serial killer', types: ['tv', 'movie'] },
   { id: 9826, name: 'murder', types: ['tv'] },
+  { id: 6019, name: 'human trafficking', types: ['tv', 'movie'], passes: NEW_ONLY_PASSES },
+  { id: 2149, name: 'drug trafficking', types: ['tv', 'movie'], passes: NEW_ONLY_PASSES },
+  { id: 10175, name: 'drug cartel', types: ['tv', 'movie'], passes: NEW_ONLY_PASSES },
+  { id: 10291, name: 'organized crime', types: ['tv', 'movie'], passes: NEW_ONLY_PASSES },
+  { id: 208458, name: 'trafficking', types: ['tv', 'movie'], passes: NEW_ONLY_PASSES },
+  { id: 294521, name: 'smuggling', types: ['tv'], passes: NEW_ONLY_PASSES },
 ];
+const runsIn = (s, kind, pass) => s.types.includes(kind) && (s.passes ?? ALL_PASSES).includes(pass);
 export const MAX_DISCOVER_PAGES = 10;
 export const MAX_TRENDING_PAGES = 20;
 export const RECENT_DAYS = 90; // window for tc-recent and for the recent discover pass
@@ -97,7 +107,7 @@ export async function buildPass(client, kind, pass, today) {
 // Same pass as buildPass, for the extra keyword sets of this kind only (genre 99 + keyword each).
 // Returns the merged list (empty when no set applies). Never used for Trending.
 export async function buildExtraPass(client, kind, pass, today) {
-  const sets = EXTRA_KEYWORD_SETS.filter((s) => s.types.includes(kind));
+  const sets = EXTRA_KEYWORD_SETS.filter((s) => runsIn(s, kind, pass));
   const extra = { sort_by: PASS_SORT[pass](kind) };
   if (pass === 'new') {
     extra[kind === 'movie' ? 'primary_release_date.lte' : 'first_air_date.lte'] = today;
@@ -112,7 +122,7 @@ export async function buildExtraPass(client, kind, pass, today) {
 export async function buildExtraRecentPass(client, today) {
   const extra = { sort_by: 'popularity.desc', 'air_date.gte': daysBefore(today, RECENT_DAYS) };
   const lists = await Promise.all(
-    EXTRA_KEYWORD_SETS.filter((s) => s.types.includes('tv')).map((s) =>
+    EXTRA_KEYWORD_SETS.filter((s) => runsIn(s, 'tv', 'recent')).map((s) =>
       discoverPages(client, 'tv', { ...extra, with_genres: '99', with_keywords: String(s.id) }, MAX_RECENT_PAGES),
     ),
   );
