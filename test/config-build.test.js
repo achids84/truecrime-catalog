@@ -174,3 +174,45 @@ test('a discover catalogue under 20 items fails the build and names it', async (
   );
   await assert.rejects(stat(p.distDir));
 });
+
+// ---- manifest from the config -------------------------------------------------------------
+test('manifest lists exactly the enabled catalogues, in config order, each with extra skip', async () => {
+  const p = await setup();
+  const cfg = {
+    catalogues: [
+      trending,
+      discover({ id: 'tc-off', name: 'Off', enabled: false }),
+      discover({ id: 'tc-top', name: 'Top rated', types: ['movie'], limit: 40 }),
+      newest,
+    ],
+  };
+  await run(p, mockFetch(fakeTmdb({ nullEvery: 0 })), { config: cfg });
+  const m = await readJson(p, 'manifest.json');
+  assert.deepEqual(m.catalogs.map((c) => `${c.type}/${c.id}/${c.name}`), [
+    'movie/tc-trending/Trending this week', 'movie/tc-top/Top rated', 'movie/tc-new/New',
+    'series/tc-trending/Trending this week', 'series/tc-new/New',
+  ]);
+  for (const c of m.catalogs) assert.deepEqual(c.extra, [{ name: 'skip' }]);
+  assert.ok(!JSON.stringify(m).includes('tc-off'));
+  assert.deepEqual(m.types, ['movie', 'series']);
+  assert.ok(!(await walk(p.distDir)).some((f) => f.includes('tc-off')));
+});
+
+test('manifest types only list types that have a catalogue', async () => {
+  const p = await setup();
+  await run(p, mockFetch(fakeTmdb({ nullEvery: 0 })), { config: { catalogues: [discover({ types: ['series'], limit: 30 })] } });
+  assert.deepEqual((await readJson(p, 'manifest.json')).types, ['series']);
+  const html = await readFile(join(p.distDir, 'index.html'), 'utf8');
+  assert.match(html, /Each type has one catalogue: Top\./);
+});
+
+test('manifest version comes from package.json: 0.2.0, and the shipped config yields 4 catalogues', async () => {
+  const p = await setup();
+  await run(p, mockFetch(fakeTmdb()), { version: undefined });
+  const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+  const m = await readJson(p, 'manifest.json');
+  assert.equal(m.version, '0.2.0');
+  assert.equal(m.version, pkg.version);
+  assert.equal(m.catalogs.length, 4);
+  assert.ok(!JSON.stringify(m).includes('tc-top-rated'));
+});

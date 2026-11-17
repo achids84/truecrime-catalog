@@ -27,16 +27,32 @@ export const TMDB_ATTRIBUTION =
 
 export class BuildError extends Error {}
 
-export function buildManifest(version) {
+// Types that have at least one catalogue, in manifest order.
+const typesOf = (catalogues) => TYPES.filter((t) => ofType(catalogues, t).length > 0);
+
+// One sentence for the landing page, e.g. "Each type has two catalogues: Trending this week and New."
+const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+export function describeCatalogues(catalogues) {
+  const lists = typesOf(catalogues).map((t) => ofType(catalogues, t).map((c) => c.name));
+  const same = lists.every((l) => JSON.stringify(l) === JSON.stringify(lists[0]));
+  if (!same) return 'The catalogues differ between movies and series; they are listed in Stremio.';
+  const names = lists[0];
+  const n = names.length;
+  const joined = n === 1 ? names[0] : `${names.slice(0, -1).join(', ')} and ${names[n - 1]}`;
+  return `Each type has ${NUMBER_WORDS[n] ?? n} catalogue${n === 1 ? '' : 's'}: ${joined}.`;
+}
+
+// catalogues: the enabled entries of config/catalogues.json (disabled ones are simply not passed).
+export function buildManifest(version, catalogues = CATALOGS) {
   return {
     id: ADDON_ID,
     version,
     name: 'True Crime Documentaries',
     description: 'True crime documentaries: trending this week and new. Data from TMDB.',
     resources: ['catalog'],
-    types: [...TYPES],
-    catalogs: TYPES.flatMap((type) =>
-      CATALOGS.map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
+    types: typesOf(catalogues),
+    catalogs: typesOf(catalogues).flatMap((type) =>
+      ofType(catalogues, type).map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
     ),
   };
 }
@@ -69,7 +85,7 @@ export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNe
   return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions };
 }
 
-export function renderIndexHtml() {
+export function renderIndexHtml(catalogues = CATALOGS) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -88,7 +104,7 @@ export function renderIndexHtml() {
 </head>
 <body>
 <h1>True Crime Documentaries</h1>
-<p>A Stremio addon with true crime documentaries, as movies and series. Each type has two catalogues: Trending this week and New.</p>
+<p>A Stremio addon with true crime documentaries, as movies and series. ${describeCatalogues(catalogues)}</p>
 <p><a class="btn" id="install" href="#">Install in Stremio</a></p>
 <p>Or paste this manifest URL into Stremio's addon search box:<br><code id="url"></code></p>
 <script>
@@ -106,8 +122,8 @@ export function renderIndexHtml() {
 export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues = CATALOGS }) {
   const files = new Map();
   const json = (v) => JSON.stringify(v) + '\n';
-  files.set('manifest.json', json(buildManifest(version)));
-  files.set('index.html', renderIndexHtml());
+  files.set('manifest.json', json(buildManifest(version, catalogues)));
+  files.set('index.html', renderIndexHtml(catalogues));
   files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues }), null, 2) + '\n');
   for (const type of TYPES) {
     for (const c of ofType(catalogues, type)) {
