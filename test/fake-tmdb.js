@@ -1,8 +1,7 @@
 // A fake TMDB for offline tests. No network.
-// Per kind, the three discover passes return disjoint id ranges so tests can tell them apart:
+// Per kind, the two discover passes return disjoint id ranges so tests can tell them apart:
 //   P (popularity.desc):      a = 1..200,       b = 101..300     (high popularity)
 //   N (release date desc):    a = 1001..1200,   b = 1101..1300   (recent, LOW popularity)
-//   V (vote_count.desc):      a = 2001..2200,   b = 2101..2300   (very high vote_count)
 // Trending slot s < trendingHits is P id 300-s (genre [99]); slot trendingHits is N id 1001
 // (in the union, genre [99]); slot trendingHits+1 is id 5001 (genre [99,80], in no pass);
 // every other slot is a stranger (90000+s, genre [99,35]) that must not qualify.
@@ -23,10 +22,6 @@ function discoverItem(id, sort, lte) {
     date = id % 7 === 0 ? '2027-03-01' : `20${10 + (id % 15)}-0${1 + (id % 9)}-1${id % 9}`;
     popularity = 1000 - id;
     vote_count = (id * 37) % 500;
-  } else if (sort === 'vote_count.desc') {
-    date = `20${10 + (id % 15)}-0${1 + (id % 9)}-1${id % 9}`;
-    popularity = 3;
-    vote_count = 100000 - id;
   } else {
     date = `2026-11-${pad(1 + (id % 17))}`; // 2026-11-01 .. 2026-11-17
     if (lte && date > lte) date = lte;
@@ -62,8 +57,8 @@ export function fakeTmdb(opts = {}) {
       const sort = q.get('sort_by');
       const lte = q.get('primary_release_date.lte') ?? q.get('first_air_date.lte');
       const isB = Boolean(q.get('with_keywords'));
-      const base =
-        sort === 'popularity.desc' ? (isB ? 100 : 0) : sort === 'vote_count.desc' ? (isB ? 2100 : 2000) : isB ? 1100 : 1000;
+      if (sort !== 'popularity.desc' && !sort.endsWith('date.desc')) return jsonRes({}, 400); // no other sort is used
+      const base = sort === 'popularity.desc' ? (isB ? 100 : 0) : isB ? 1100 : 1000;
       const results = Array.from({ length: 20 }, (_, i) => discoverItem(pageIds(base, page, i), sort, lte));
       return { page, total_pages: 50, results };
     }

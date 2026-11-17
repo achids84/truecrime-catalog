@@ -10,7 +10,6 @@ export const TYPES = ['movie', 'series'];
 export const CATALOGS = [
   { id: 'tc-trending', name: 'Trending this week' },
   { id: 'tc-new', name: 'New' },
-  { id: 'tc-popular', name: 'Popular' },
 ];
 export const TMDB_ATTRIBUTION =
   'This product uses the TMDB API but is not endorsed or certified by TMDB.';
@@ -22,7 +21,7 @@ export function buildManifest(version) {
     id: ADDON_ID,
     version,
     name: 'True Crime Documentaries',
-    description: 'True crime documentaries: trending, new and popular. Data from TMDB.',
+    description: 'True crime documentaries: trending this week and new. Data from TMDB.',
     resources: ['catalog'],
     types: [...TYPES],
     catalogs: TYPES.flatMap((type) =>
@@ -49,7 +48,7 @@ export function assertMinimums(catalogs, min = MIN_ITEMS) {
 }
 
 // newestNew: newest release date in New, per type. contributions: per catalogue, how many
-// of its items each discover pass contributed (P = popularity pass, New, Popular; an item in
+// of its items each discover pass contributed (P = popularity pass, New; an item in
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
 export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
   const counts = {};
@@ -76,7 +75,7 @@ export function renderIndexHtml() {
 </head>
 <body>
 <h1>True Crime Documentaries</h1>
-<p>A Stremio addon with true crime documentaries, as movies and series. Each type has three catalogues: Trending this week, New and Popular.</p>
+<p>A Stremio addon with true crime documentaries, as movies and series. Each type has two catalogues: Trending this week and New.</p>
 <p><a class="btn" id="install" href="#">Install in Stremio</a></p>
 <p>Or paste this manifest URL into Stremio's addon search box:<br><code id="url"></code></p>
 <script>
