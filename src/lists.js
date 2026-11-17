@@ -27,19 +27,12 @@ export function buildTrending(qualified, padSource, { min = MIN_ITEMS, max = MAX
 }
 
 // New: from the date-sorted pass. Release/first-air date on or before today (YYYY-MM-DD),
-// sorted by descending date, ties by popularity. The date is `sortDate` when an item has one
-// (series: last air date, else first air date), otherwise `date` (movies). `date` itself is
-// never changed, so cards keep showing the release/first-air year.
-const sortKeyOf = (it) => it.sortDate || it.date;
+// sorted by the real date descending, ties by popularity.
 export function buildNew(items, today, { max = MAX_ITEMS } = {}) {
   return dedupeByImdb(
     items
       .filter((it) => it.date && it.date <= today)
-      .sort((a, b) => {
-        const ka = sortKeyOf(a);
-        const kb = sortKeyOf(b);
-        return ka < kb ? 1 : ka > kb ? -1 : byPopularity(a, b);
-      }),
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : byPopularity(a, b))),
   ).slice(0, max);
 }
 

@@ -84,30 +84,28 @@ export async function runBuild({
     skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
     const trend = buildTrending(attach(trending), attach(P));
     padded[type] = trend.padded;
-    let newPool = attach(N);
+    // tc-new is exactly what main builds: the New pass only, sorted by first air date.
+    // (The recent pass and the date cache never feed it.)
+    const newPool = attach(N);
     if (kind === 'tv') {
-      // Series: sort by last air date (first air date when unknown), looked up per title.
-      newPool = attach(unionById(N, R));
+      // Dates for tc-recent (next commit): last air date, else first air date, per title.
+      const datePool = attach(unionById(N, R));
       const known = new Set([...P, ...N].map((it) => it.id));
       seriesNew.recentAdded = R.filter((it) => !known.has(it.id)).length;
-      const { fetched, failed } = await resolveTvDates(newPool, tvDates, client, now);
+      const { fetched, failed } = await resolveTvDates(datePool, tvDates, client, now);
       await saveTvDates(tvDatesPath, tvDates); // cache only; dist/ is still untouched
       seriesNew.lookups = fetched;
       seriesNew.lookupsFailed = failed;
-      newPool = newPool.map((it) => ({ ...it, ...sortKey(it, tvDates[it.id]) }));
+      seriesNew.keyFromFirst = datePool.filter((it) => sortKey(it, tvDates[it.id]).sortSource === 'first').length;
     }
     const newItems = buildNew(newPool, today);
-    if (kind === 'tv') seriesNew.keyFromFirst = newItems.filter((it) => it.sortSource === 'first').length;
     const passSets = {
       P: new Set(P.map((it) => it.id)),
       New: new Set(N.map((it) => it.id)),
     };
-    // Recent is counted for the New catalogue only, so Trending's status entry is unchanged
-    const newPassSets = kind === 'tv' ? { ...passSets, Recent: new Set(R.map((it) => it.id)) } : passSets;
-    // newest first-air/release date in the list (for movies, the first item, as before)
-    newestNew[type] = newItems.reduce((m, it) => (it.date > m ? it.date : m), '') || null;
+    newestNew[type] = newItems[0]?.date ?? null;
     contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
-    contribution[`${type}/tc-new`] = contributions(newItems, newPassSets);
+    contribution[`${type}/tc-new`] = contributions(newItems, passSets);
     catalogs[type] = {
       'tc-trending': toMetas(trend.items),
       'tc-new': toMetas(newItems),
