@@ -95,10 +95,10 @@ test('request budget of a cold run (empty idmap), mocked', async () => {
   const trending = count(/\/trending\//);
   const ext = count(/external_ids/);
   const tv = count(/^\/3\/tv\/\d+$/);
-  assert.deepEqual([keyword, discover, trending], [1, 86, 40]); // 127 fixed (80 + 6 recent-pass pages)
+  assert.deepEqual([keyword, discover, trending], [1, 99, 40]); // extras off return one empty page per set: 4 movie + 9 tv
   assert.equal(ext, 2 * 601 + 120); // 600 pass titles + 1 genre-rule trending title, per kind, + 120 recent-pass titles
   assert.equal(tv, 692); // one /tv/{id} per series in the union of New, P and recent pools with an IMDb id (288 + 288 + 116)
-  assert.equal(tmdbCalls.length, 2141);
+  assert.equal(tmdbCalls.length, 2154);
   // Cinemeta: one per series in the pool that is not Ended: 144 odd New ids + 116 recent-pass ids
   assert.equal(cinemetaCalls.length, 260);
   console.log(`# cold run: ${tmdbCalls.length} TMDB + ${cinemetaCalls.length} Cinemeta requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids + ${tv} tv`);
@@ -206,11 +206,11 @@ test('redactor replaces the token in any string', () => {
   assert.equal(redactor('')('plain'), 'plain');
 });
 
-test('manifest version comes from package.json (0.1.4: tc-recent uses Cinemeta dates)', async () => {
+test('manifest version comes from package.json (0.1.5: extra keyword sets)', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()), { version: undefined });
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '0.1.4');
+  assert.equal(pkg.version, '0.1.5');
 });
