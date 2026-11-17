@@ -27,22 +27,30 @@ export function buildTrending(qualified, padSource, { min = MIN_ITEMS, max = MAX
 }
 
 // New: from the date-sorted pass. Release/first-air date on or before today (YYYY-MM-DD),
-// sorted by the real date descending, ties by popularity.
+// sorted by descending date, ties by popularity. The date is `sortDate` when an item has one
+// (series: last air date, else first air date), otherwise `date` (movies). `date` itself is
+// never changed, so cards keep showing the release/first-air year.
+const sortKeyOf = (it) => it.sortDate || it.date;
 export function buildNew(items, today, { max = MAX_ITEMS } = {}) {
   return dedupeByImdb(
     items
       .filter((it) => it.date && it.date <= today)
-      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : byPopularity(a, b))),
+      .sort((a, b) => {
+        const ka = sortKeyOf(a);
+        const kb = sortKeyOf(b);
+        return ka < kb ? 1 : ka > kb ? -1 : byPopularity(a, b);
+      }),
   ).slice(0, max);
 }
 
 // How many of `items` each pass (P, New) contributed (an item in several passes counts in each);
 // genreRule = in no pass, i.e. admitted to Trending only by the genre_ids rule.
 export function contributions(items, passSets) {
-  const out = { P: 0, New: 0, genreRule: 0 };
+  const passes = ['P', 'New', ...(passSets.Recent ? ['Recent'] : [])];
+  const out = { P: 0, New: 0, ...(passSets.Recent ? { Recent: 0 } : {}), genreRule: 0 };
   for (const it of items) {
     let any = false;
-    for (const k of ['P', 'New']) {
+    for (const k of passes) {
       if (passSets[k].has(it.id)) {
         out[k]++;
         any = true;

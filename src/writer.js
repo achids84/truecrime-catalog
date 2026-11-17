@@ -50,10 +50,10 @@ export function assertMinimums(catalogs, min = MIN_ITEMS) {
 // newestNew: newest release date in New, per type. contributions: per catalogue, how many
 // of its items each discover pass contributed (P = popularity pass, New; an item in
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
-export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
+export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }) {
   const counts = {};
   for (const type of TYPES) for (const c of CATALOGS) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
-  return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions };
+  return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions, ...(seriesNew ? { seriesNew } : {}) };
 }
 
 export function renderIndexHtml() {
@@ -90,12 +90,12 @@ export function renderIndexHtml() {
 }
 
 // Pure: returns Map<relativePath, string> for everything that goes into dist/.
-export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
+export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }) {
   const files = new Map();
   const json = (v) => JSON.stringify(v) + '\n';
   files.set('manifest.json', json(buildManifest(version)));
   files.set('index.html', renderIndexHtml());
-  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }), null, 2) + '\n');
+  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }), null, 2) + '\n');
   for (const type of TYPES) {
     for (const c of CATALOGS) {
       const all = catalogs[type][c.id];
