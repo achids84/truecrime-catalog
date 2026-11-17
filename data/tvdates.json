@@ -1,0 +1,2918 @@
+{
+  "78": {
+    "first_air_date": "1992-03-31",
+    "last_air_date": "2026-11-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "90": {
+    "first_air_date": "2003-09-03",
+    "last_air_date": "2026-04-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "1802": {
+    "first_air_date": "1988-02-07",
+    "last_air_date": "2012-10-29",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "2727": {
+    "first_air_date": "2004-10-13",
+    "last_air_date": "2024-12-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "3719": {
+    "first_air_date": "1988-01-19",
+    "last_air_date": "2026-10-31",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "5146": {
+    "first_air_date": "2004-06-03",
+    "last_air_date": "2026-08-27",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "6166": {
+    "first_air_date": "2004-07-23",
+    "last_air_date": "2012-02-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "7439": {
+    "first_air_date": "2007-03-31",
+    "last_air_date": "2022-12-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "7734": {
+    "first_air_date": "2008-05-09",
+    "last_air_date": "2026-09-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "7786": {
+    "first_air_date": "2006-10-18",
+    "last_air_date": "2013-07-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "8114": {
+    "first_air_date": "2005-06-04",
+    "last_air_date": "2017-02-11",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "8464": {
+    "first_air_date": "2008-11-17",
+    "last_air_date": "2014-02-05",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "10184": {
+    "first_air_date": "2004-08-06",
+    "last_air_date": "2026-10-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "11105": {
+    "first_air_date": "1996-04-21",
+    "last_air_date": "2011-06-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "11863": {
+    "first_air_date": "1967-10-20",
+    "last_air_date": "2026-10-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "12258": {
+    "first_air_date": "1999-01-01",
+    "last_air_date": "2007-10-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "13042": {
+    "first_air_date": "1992-10-07",
+    "last_air_date": "2022-09-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "14132": {
+    "first_air_date": "1996-06-10",
+    "last_air_date": "2004-10-31",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "14874": {
+    "first_air_date": "2004-01-15",
+    "last_air_date": "2009-12-31",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "16532": {
+    "first_air_date": "2003-01-14",
+    "last_air_date": "2003-03-04",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "17113": {
+    "first_air_date": "1990-03-29",
+    "last_air_date": "2024-06-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "21421": {
+    "first_air_date": "2004-10-07",
+    "last_air_date": "2018-06-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "21572": {
+    "first_air_date": "2007-06-21",
+    "last_air_date": "2023-03-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "22128": {
+    "first_air_date": "2006-03-10",
+    "last_air_date": "2009-09-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "22865": {
+    "first_air_date": "1991-11-11",
+    "last_air_date": "2015-03-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "25181": {
+    "first_air_date": "2009-10-18",
+    "last_air_date": "2026-07-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "25979": {
+    "first_air_date": "2010-03-11",
+    "last_air_date": "2016-07-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "29393": {
+    "first_air_date": "1997-06-30",
+    "last_air_date": "2011-10-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "31750": {
+    "first_air_date": "2007-09-23",
+    "last_air_date": "2007-10-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "35086": {
+    "first_air_date": "2009-10-14",
+    "last_air_date": "2026-03-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "35736": {
+    "first_air_date": "1995-10-10",
+    "last_air_date": "2010-10-31",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "36154": {
+    "first_air_date": "2010-08-25",
+    "last_air_date": "2025-01-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "36829": {
+    "first_air_date": "2008-10-22",
+    "last_air_date": "2017-01-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "37796": {
+    "first_air_date": "2005-07-19",
+    "last_air_date": "2008-03-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "38534": {
+    "first_air_date": "2011-01-06",
+    "last_air_date": "2016-11-03",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "38674": {
+    "first_air_date": "2011-01-24",
+    "last_air_date": "2014-04-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "40891": {
+    "first_air_date": "2002-01-08",
+    "last_air_date": "2021-06-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "41552": {
+    "first_air_date": "2010-01-12",
+    "last_air_date": "2016-07-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "41580": {
+    "first_air_date": "2010-05-31",
+    "last_air_date": "2016-04-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "42840": {
+    "first_air_date": "2011-05-16",
+    "last_air_date": "2015-03-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "44156": {
+    "first_air_date": "2005-10-27",
+    "last_air_date": "2016-04-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "47044": {
+    "first_air_date": "2012-09-08",
+    "last_air_date": "2014-11-07",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "48736": {
+    "first_air_date": "2012-06-07",
+    "last_air_date": "2017-12-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "49920": {
+    "first_air_date": "2020-08-23",
+    "last_air_date": "2022-11-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "53100": {
+    "first_air_date": "2013-06-04",
+    "last_air_date": "2017-10-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "55343": {
+    "first_air_date": "2008-09-20",
+    "last_air_date": "2024-11-04",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "55575": {
+    "first_air_date": "2012-10-15",
+    "last_air_date": "2024-10-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "58818": {
+    "first_air_date": "2013-09-03",
+    "last_air_date": "2025-11-15",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "59679": {
+    "first_air_date": "2012-11-17",
+    "last_air_date": "2020-04-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "61660": {
+    "first_air_date": "2000-06-06",
+    "last_air_date": "2026-10-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "61929": {
+    "first_air_date": "2015-02-08",
+    "last_air_date": "2024-05-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "61956": {
+    "first_air_date": "2014-09-29",
+    "last_air_date": "2022-12-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "62079": {
+    "first_air_date": "2005-10-26",
+    "last_air_date": "2026-10-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "62168": {
+    "first_air_date": "2011-10-25",
+    "last_air_date": "2020-01-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "62248": {
+    "first_air_date": "2013-01-29",
+    "last_air_date": "2015-04-08",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "62416": {
+    "first_air_date": "2014-04-14",
+    "last_air_date": "2024-12-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "63367": {
+    "first_air_date": "2011-01-31",
+    "last_air_date": "2026-10-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "63424": {
+    "first_air_date": "2014-04-20",
+    "last_air_date": "2018-09-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "64439": {
+    "first_air_date": "2015-12-18",
+    "last_air_date": "2018-10-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "64888": {
+    "first_air_date": "2013-01-15",
+    "last_air_date": "2015-05-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "64983": {
+    "first_air_date": "2012-01-25",
+    "last_air_date": "2014-04-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "65067": {
+    "first_air_date": "2014-10-22",
+    "last_air_date": "2020-09-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "65368": {
+    "first_air_date": "2016-01-07",
+    "last_air_date": "2017-04-20",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "65824": {
+    "first_air_date": "2015-02-17",
+    "last_air_date": "2025-08-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "66006": {
+    "first_air_date": "2014-01-08",
+    "last_air_date": "2021-06-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "66737": {
+    "first_air_date": "2016-06-11",
+    "last_air_date": "2016-07-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "66738": {
+    "first_air_date": "2016-06-11",
+    "last_air_date": "2016-06-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "67152": {
+    "first_air_date": "2016-07-19",
+    "last_air_date": "2018-12-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "67633": {
+    "first_air_date": "2016-08-24",
+    "last_air_date": "2020-07-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "68401": {
+    "first_air_date": "2016-10-25",
+    "last_air_date": "2021-01-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "68430": {
+    "first_air_date": "2016-10-28",
+    "last_air_date": "2020-05-23",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "68549": {
+    "first_air_date": "2013-11-12",
+    "last_air_date": "2018-04-07",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "69056": {
+    "first_air_date": "2016-11-14",
+    "last_air_date": "2017-12-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "69358": {
+    "first_air_date": "2015-09-07",
+    "last_air_date": "2025-11-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "70106": {
+    "first_air_date": "2007-06-16",
+    "last_air_date": "2024-03-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "70249": {
+    "first_air_date": "2016-01-17",
+    "last_air_date": "2026-03-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "70582": {
+    "first_air_date": "2014-01-13",
+    "last_air_date": "2018-08-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "72541": {
+    "first_air_date": "2016-04-20",
+    "last_air_date": "2023-09-15",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "73320": {
+    "first_air_date": "2016-06-01",
+    "last_air_date": "2025-12-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "73581": {
+    "first_air_date": "2017-12-15",
+    "last_air_date": "2017-12-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "73884": {
+    "first_air_date": "2013-06-03",
+    "last_air_date": "2026-01-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "74284": {
+    "first_air_date": "2017-07-21",
+    "last_air_date": "2026-08-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "74285": {
+    "first_air_date": "2012-07-26",
+    "last_air_date": "2020-04-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "74826": {
+    "first_air_date": "2016-02-04",
+    "last_air_date": "2021-07-23",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "75299": {
+    "first_air_date": "2017-01-27",
+    "last_air_date": "2024-11-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "76307": {
+    "first_air_date": "2018-01-26",
+    "last_air_date": "2020-03-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "76458": {
+    "first_air_date": "2016-11-07",
+    "last_air_date": "2026-04-13",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "76475": {
+    "first_air_date": "2009-10-01",
+    "last_air_date": "2026-10-22",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "76555": {
+    "first_air_date": "2018-01-22",
+    "last_air_date": "2018-02-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "76638": {
+    "first_air_date": "2018-01-10",
+    "last_air_date": "2020-02-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "77601": {
+    "first_air_date": "2018-03-16",
+    "last_air_date": "2018-03-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "78878": {
+    "first_air_date": "2016-10-05",
+    "last_air_date": "2017-06-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "79126": {
+    "first_air_date": "2018-05-11",
+    "last_air_date": "2018-05-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "79360": {
+    "first_air_date": "2018-04-21",
+    "last_air_date": "2020-10-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "79363": {
+    "first_air_date": "2018-04-01",
+    "last_air_date": "2021-09-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "79795": {
+    "first_air_date": "2017-09-07",
+    "last_air_date": "2023-12-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "80588": {
+    "first_air_date": "2018-06-03",
+    "last_air_date": "2026-03-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "81337": {
+    "first_air_date": "2018-05-29",
+    "last_air_date": "2025-01-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "81440": {
+    "first_air_date": "2016-11-14",
+    "last_air_date": "2026-06-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "81590": {
+    "first_air_date": "2018-04-22",
+    "last_air_date": "2018-04-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "82000": {
+    "first_air_date": "2018-09-03",
+    "last_air_date": "2023-02-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "85012": {
+    "first_air_date": "2016-12-03",
+    "last_air_date": "2023-12-15",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "85041": {
+    "first_air_date": "2017-11-29",
+    "last_air_date": "2024-05-15",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "85224": {
+    "first_air_date": "2017-03-02",
+    "last_air_date": "2026-04-14",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "85712": {
+    "first_air_date": "2019-02-14",
+    "last_air_date": "2019-02-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "85833": {
+    "first_air_date": "2019-01-24",
+    "last_air_date": "2019-01-24",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "86152": {
+    "first_air_date": "2019-01-16",
+    "last_air_date": "2024-06-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "86304": {
+    "first_air_date": "2019-02-04",
+    "last_air_date": "2025-07-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "86898": {
+    "first_air_date": "2018-07-02",
+    "last_air_date": "2019-06-24",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "87569": {
+    "first_air_date": "2019-03-17",
+    "last_air_date": "2025-02-02",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "87600": {
+    "first_air_date": "2019-03-15",
+    "last_air_date": "2019-03-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "88880": {
+    "first_air_date": "2016-10-25",
+    "last_air_date": "2018-02-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "90014": {
+    "first_air_date": "2019-04-07",
+    "last_air_date": "2019-12-15",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "90628": {
+    "first_air_date": "2019-03-23",
+    "last_air_date": "2026-01-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "90680": {
+    "first_air_date": "2018-09-02",
+    "last_air_date": "2019-05-03",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "90686": {
+    "first_air_date": "2017-02-27",
+    "last_air_date": "2025-03-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "91183": {
+    "first_air_date": "2018-11-27",
+    "last_air_date": "2026-09-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "91438": {
+    "first_air_date": "1998-01-27",
+    "last_air_date": "2026-10-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "91837": {
+    "first_air_date": "2014-10-10",
+    "last_air_date": "2015-01-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "91932": {
+    "first_air_date": "2013-03-10",
+    "last_air_date": "2026-07-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "93005": {
+    "first_air_date": "2019-08-28",
+    "last_air_date": "2026-02-04",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "96129": {
+    "first_air_date": "2019-12-18",
+    "last_air_date": "2019-12-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "96152": {
+    "first_air_date": "2019-12-05",
+    "last_air_date": "2026-03-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "96213": {
+    "first_air_date": "2020-02-03",
+    "last_air_date": "2020-03-09",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "99626": {
+    "first_air_date": "2020-02-26",
+    "last_air_date": "2020-02-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "99694": {
+    "first_air_date": "2008-03-10",
+    "last_air_date": "2022-05-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "99751": {
+    "first_air_date": "2020-02-23",
+    "last_air_date": "2023-08-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "100157": {
+    "first_air_date": "2019-02-24",
+    "last_air_date": "2026-07-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "100379": {
+    "first_air_date": "2020-04-15",
+    "last_air_date": "2020-04-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "100698": {
+    "first_air_date": "2020-03-20",
+    "last_air_date": "2021-11-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "101106": {
+    "first_air_date": "2020-03-07",
+    "last_air_date": "2026-06-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "102287": {
+    "first_air_date": "2020-04-20",
+    "last_air_date": "2026-08-27",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "102667": {
+    "first_air_date": "2019-09-03",
+    "last_air_date": "2026-10-20",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "102831": {
+    "first_air_date": "2020-07-31",
+    "last_air_date": "2020-07-31",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "103023": {
+    "first_air_date": "2020-06-28",
+    "last_air_date": "2021-06-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "103506": {
+    "first_air_date": "2020-05-27",
+    "last_air_date": "2020-05-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "104698": {
+    "first_air_date": "2020-06-04",
+    "last_air_date": "2023-10-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "105147": {
+    "first_air_date": "2020-07-26",
+    "last_air_date": "2020-08-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "105177": {
+    "first_air_date": "2020-07-01",
+    "last_air_date": "2024-10-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "105489": {
+    "first_air_date": "2020-07-22",
+    "last_air_date": "2020-07-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "106212": {
+    "first_air_date": "2017-11-30",
+    "last_air_date": "2017-12-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "107457": {
+    "first_air_date": "2007-11-13",
+    "last_air_date": "2009-05-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "107892": {
+    "first_air_date": "2019-12-05",
+    "last_air_date": "2022-11-18",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "108464": {
+    "first_air_date": "2020-08-23",
+    "last_air_date": "2026-10-27",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "110412": {
+    "first_air_date": "2020-09-25",
+    "last_air_date": "2020-09-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "110558": {
+    "first_air_date": "2020-09-09",
+    "last_air_date": "2024-06-18",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "110709": {
+    "first_air_date": "2020-09-28",
+    "last_air_date": "2026-11-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "111256": {
+    "first_air_date": "2020-01-23",
+    "last_air_date": "2020-08-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "111495": {
+    "first_air_date": "2020-11-05",
+    "last_air_date": "2020-11-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "112535": {
+    "first_air_date": "2020-10-30",
+    "last_air_date": "2024-02-04",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "112556": {
+    "first_air_date": "2018-08-30",
+    "last_air_date": "2026-10-29",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "112566": {
+    "first_air_date": "2020-11-08",
+    "last_air_date": "2023-07-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "113136": {
+    "first_air_date": "1988-01-18",
+    "last_air_date": "2026-10-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "113888": {
+    "first_air_date": "2020-12-02",
+    "last_air_date": "2025-09-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "114003": {
+    "first_air_date": "2020-12-07",
+    "last_air_date": "2020-12-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "114531": {
+    "first_air_date": "2005-01-03",
+    "last_air_date": "2026-09-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "114635": {
+    "first_air_date": "2020-12-04",
+    "last_air_date": "2025-08-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "114705": {
+    "first_air_date": "2021-01-13",
+    "last_air_date": "2021-01-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "116106": {
+    "first_air_date": "2021-01-04",
+    "last_air_date": "2026-06-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "116322": {
+    "first_air_date": "2021-01-04",
+    "last_air_date": "2025-07-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "116989": {
+    "first_air_date": "2021-02-10",
+    "last_air_date": "2021-02-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "117180": {
+    "first_air_date": "2020-02-03",
+    "last_air_date": "2026-05-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "117374": {
+    "first_air_date": "1995-06-24",
+    "last_air_date": "2007-06-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "119337": {
+    "first_air_date": "2021-03-03",
+    "last_air_date": "2021-03-03",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "120323": {
+    "first_air_date": "2021-02-20",
+    "last_air_date": "2026-10-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "120582": {
+    "first_air_date": "2021-04-07",
+    "last_air_date": "2021-04-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "122672": {
+    "first_air_date": "2021-05-05",
+    "last_air_date": "2021-05-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "122817": {
+    "first_air_date": "2016-08-28",
+    "last_air_date": "2026-05-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "123345": {
+    "first_air_date": "2020-02-27",
+    "last_air_date": "2026-10-21",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "127643": {
+    "first_air_date": "2021-07-14",
+    "last_air_date": "2021-07-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "132035": {
+    "first_air_date": "2021-08-02",
+    "last_air_date": "2024-08-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "133359": {
+    "first_air_date": "2021-10-08",
+    "last_air_date": "2021-10-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "135134": {
+    "first_air_date": "2021-09-28",
+    "last_air_date": "2024-12-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "136683": {
+    "first_air_date": "2021-08-24",
+    "last_air_date": "2025-03-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "137530": {
+    "first_air_date": "2021-11-06",
+    "last_air_date": "2022-11-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "137568": {
+    "first_air_date": "2021-10-30",
+    "last_air_date": "2026-07-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "139086": {
+    "first_air_date": "2021-12-14",
+    "last_air_date": "2021-12-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "153588": {
+    "first_air_date": "2021-12-29",
+    "last_air_date": "2021-12-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "153779": {
+    "first_air_date": "2022-01-16",
+    "last_air_date": "2026-02-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "154877": {
+    "first_air_date": "2022-01-04",
+    "last_air_date": "2025-03-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "155757": {
+    "first_air_date": "2022-01-16",
+    "last_air_date": "2026-09-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "156595": {
+    "first_air_date": "2022-03-01",
+    "last_air_date": "2024-06-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "195420": {
+    "first_air_date": "2022-04-21",
+    "last_air_date": "2022-04-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "196122": {
+    "first_air_date": "2022-04-06",
+    "last_air_date": "2022-04-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "197248": {
+    "first_air_date": "2022-04-20",
+    "last_air_date": "2022-04-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "201292": {
+    "first_air_date": "2022-04-04",
+    "last_air_date": "2026-05-14",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "202880": {
+    "first_air_date": "2022-06-08",
+    "last_air_date": "2022-06-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "202886": {
+    "first_air_date": "2022-06-15",
+    "last_air_date": "2022-06-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "204646": {
+    "first_air_date": "2022-07-22",
+    "last_air_date": "2026-10-17",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "204774": {
+    "first_air_date": "2022-07-21",
+    "last_air_date": "2022-07-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "205591": {
+    "first_air_date": "2022-06-06",
+    "last_air_date": "2025-07-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "206386": {
+    "first_air_date": "2022-08-12",
+    "last_air_date": "2026-10-17",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "206593": {
+    "first_air_date": "2021-03-08",
+    "last_air_date": "2026-08-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "207517": {
+    "first_air_date": "2024-11-26",
+    "last_air_date": "2024-11-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "208720": {
+    "first_air_date": "2022-09-14",
+    "last_air_date": "2022-09-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "208926": {
+    "first_air_date": "2022-08-05",
+    "last_air_date": "2026-09-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "209167": {
+    "first_air_date": "2022-10-07",
+    "last_air_date": "2022-10-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "212870": {
+    "first_air_date": "2022-11-02",
+    "last_air_date": "2022-11-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "214180": {
+    "first_air_date": "2022-11-29",
+    "last_air_date": "2022-11-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "216315": {
+    "first_air_date": "2023-02-09",
+    "last_air_date": "2023-02-09",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "217448": {
+    "first_air_date": "2023-01-12",
+    "last_air_date": "2024-07-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "218835": {
+    "first_air_date": "2023-01-23",
+    "last_air_date": "2025-03-10",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "218982": {
+    "first_air_date": "2023-01-23",
+    "last_air_date": "2025-06-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "219756": {
+    "first_air_date": "2023-10-16",
+    "last_air_date": "2023-10-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "220155": {
+    "first_air_date": "2023-02-16",
+    "last_air_date": "2023-02-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "220939": {
+    "first_air_date": "2023-03-07",
+    "last_air_date": "2023-05-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "221121": {
+    "first_air_date": "2023-03-13",
+    "last_air_date": "2025-08-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "221122": {
+    "first_air_date": "2023-02-28",
+    "last_air_date": "2026-03-31",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "222314": {
+    "first_air_date": "2023-04-12",
+    "last_air_date": "2023-04-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "223614": {
+    "first_air_date": "2021-09-25",
+    "last_air_date": "2022-05-21",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "225244": {
+    "first_air_date": "2023-03-22",
+    "last_air_date": "2023-05-31",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "225772": {
+    "first_air_date": "2023-02-15",
+    "last_air_date": "2026-06-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "226660": {
+    "first_air_date": "2023-03-21",
+    "last_air_date": "2025-09-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "226706": {
+    "first_air_date": "2023-05-29",
+    "last_air_date": "2025-01-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "227144": {
+    "first_air_date": "2023-05-23",
+    "last_air_date": "2026-10-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "227971": {
+    "first_air_date": "2023-05-29",
+    "last_air_date": "2026-10-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "229166": {
+    "first_air_date": "2023-07-09",
+    "last_air_date": "2023-07-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "230043": {
+    "first_air_date": "2023-07-28",
+    "last_air_date": "2023-07-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "230519": {
+    "first_air_date": "2023-07-26",
+    "last_air_date": "2026-08-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "231034": {
+    "first_air_date": "2023-07-19",
+    "last_air_date": "2026-10-21",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "231309": {
+    "first_air_date": "2024-11-01",
+    "last_air_date": "2024-11-01",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "234994": {
+    "first_air_date": "2023-10-12",
+    "last_air_date": "2023-11-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "238126": {
+    "first_air_date": "2023-12-06",
+    "last_air_date": "2023-12-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "238986": {
+    "first_air_date": "2023-12-04",
+    "last_air_date": "2023-12-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "239961": {
+    "first_air_date": "2023-11-18",
+    "last_air_date": "2026-10-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "242845": {
+    "first_air_date": "2024-01-17",
+    "last_air_date": "2024-01-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "243766": {
+    "first_air_date": "2024-01-15",
+    "last_air_date": "2026-10-22",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "245902": {
+    "first_air_date": "2024-03-17",
+    "last_air_date": "2024-04-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "248126": {
+    "first_air_date": "2024-03-20",
+    "last_air_date": "2026-03-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "248795": {
+    "first_air_date": "2024-04-03",
+    "last_air_date": "2024-04-03",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "249294": {
+    "first_air_date": "2024-08-12",
+    "last_air_date": "2024-08-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "253242": {
+    "first_air_date": "2024-05-05",
+    "last_air_date": "2026-07-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "253249": {
+    "first_air_date": "2024-05-15",
+    "last_air_date": "2024-05-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "254006": {
+    "first_air_date": "2024-05-12",
+    "last_air_date": "2024-07-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "255251": {
+    "first_air_date": "2025-12-02",
+    "last_air_date": "2025-12-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "255293": {
+    "first_air_date": "2024-06-17",
+    "last_air_date": "2024-06-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "255572": {
+    "first_air_date": "2024-06-25",
+    "last_air_date": "2024-06-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "255805": {
+    "first_air_date": "2024-06-03",
+    "last_air_date": "2026-07-13",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "256298": {
+    "first_air_date": "2024-06-06",
+    "last_air_date": "2024-06-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "257631": {
+    "first_air_date": "2024-06-26",
+    "last_air_date": "2024-09-04",
+    "status": "Canceled",
+    "checkedAt": "2026-11-17"
+  },
+  "257960": {
+    "first_air_date": "2024-07-15",
+    "last_air_date": "2024-07-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "259259": {
+    "first_air_date": "2024-08-28",
+    "last_air_date": "2026-05-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "259425": {
+    "first_air_date": "2024-10-18",
+    "last_air_date": "2024-10-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "259835": {
+    "first_air_date": "2024-08-28",
+    "last_air_date": "2024-08-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "260461": {
+    "first_air_date": "2024-08-20",
+    "last_air_date": "2024-08-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "260881": {
+    "first_air_date": "2024-08-11",
+    "last_air_date": "2024-08-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "261034": {
+    "first_air_date": "2024-08-14",
+    "last_air_date": "2024-08-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "261449": {
+    "first_air_date": "2024-09-02",
+    "last_air_date": "2024-09-04",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "261572": {
+    "first_air_date": "2024-09-09",
+    "last_air_date": "2024-10-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "261649": {
+    "first_air_date": "2024-09-12",
+    "last_air_date": "2024-09-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "261713": {
+    "first_air_date": "2024-08-19",
+    "last_air_date": "2024-09-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "262194": {
+    "first_air_date": "2024-09-08",
+    "last_air_date": "2024-09-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "262376": {
+    "first_air_date": "2024-08-14",
+    "last_air_date": "2025-05-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "262445": {
+    "first_air_date": "2024-09-09",
+    "last_air_date": "2025-11-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "262908": {
+    "first_air_date": "2024-09-10",
+    "last_air_date": "2024-10-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "262911": {
+    "first_air_date": "2024-08-26",
+    "last_air_date": "2026-09-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "270492": {
+    "first_air_date": "2024-09-24",
+    "last_air_date": "2024-09-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "270750": {
+    "first_air_date": "2024-08-19",
+    "last_air_date": "2025-04-29",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "271295": {
+    "first_air_date": "2024-09-10",
+    "last_air_date": "2024-10-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "271924": {
+    "first_air_date": "2024-09-20",
+    "last_air_date": "2024-09-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "272299": {
+    "first_air_date": "2024-10-23",
+    "last_air_date": "2024-10-23",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "272321": {
+    "first_air_date": "2024-10-15",
+    "last_air_date": "2024-10-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "272463": {
+    "first_air_date": "2024-09-25",
+    "last_air_date": "2024-09-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "272538": {
+    "first_air_date": "2024-09-23",
+    "last_air_date": "2024-10-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "273235": {
+    "first_air_date": "2024-10-30",
+    "last_air_date": "2024-11-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "273442": {
+    "first_air_date": "2024-10-27",
+    "last_air_date": "2026-05-10",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "273813": {
+    "first_air_date": "2025-03-24",
+    "last_air_date": "2026-07-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "273939": {
+    "first_air_date": "2024-10-26",
+    "last_air_date": "2026-06-20",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "274617": {
+    "first_air_date": "2024-10-10",
+    "last_air_date": "2026-03-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "274633": {
+    "first_air_date": "2024-10-20",
+    "last_air_date": "2026-05-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "274748": {
+    "first_air_date": "1993-07-20",
+    "last_air_date": "1994-01-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "274782": {
+    "first_air_date": "2024-10-24",
+    "last_air_date": "2024-11-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "274820": {
+    "first_air_date": "2024-11-25",
+    "last_air_date": "2024-11-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "274847": {
+    "first_air_date": "2024-10-31",
+    "last_air_date": "2024-11-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "274905": {
+    "first_air_date": "2024-11-22",
+    "last_air_date": "2024-11-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "275122": {
+    "first_air_date": "2024-11-06",
+    "last_air_date": "2024-11-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "275587": {
+    "first_air_date": "2024-11-03",
+    "last_air_date": "2024-12-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "275630": {
+    "first_air_date": "2024-10-30",
+    "last_air_date": "2024-10-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "276133": {
+    "first_air_date": "2024-11-10",
+    "last_air_date": "2024-11-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "276367": {
+    "first_air_date": "2024-11-10",
+    "last_air_date": "2024-12-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "276453": {
+    "first_air_date": "2024-11-11",
+    "last_air_date": "2024-11-17",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "277316": {
+    "first_air_date": "2024-11-08",
+    "last_air_date": "2024-11-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "277789": {
+    "first_air_date": "2024-12-11",
+    "last_air_date": "2024-12-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "277831": {
+    "first_air_date": "2025-08-03",
+    "last_air_date": "2026-05-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "278761": {
+    "first_air_date": "2024-11-27",
+    "last_air_date": "2026-04-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "278841": {
+    "first_air_date": "2024-12-10",
+    "last_air_date": "2024-12-10",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "279904": {
+    "first_air_date": "2024-11-04",
+    "last_air_date": "2024-11-04",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "279937": {
+    "first_air_date": "2025-01-01",
+    "last_air_date": "2026-02-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "281131": {
+    "first_air_date": "2024-11-11",
+    "last_air_date": "2024-12-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "281371": {
+    "first_air_date": "2025-02-27",
+    "last_air_date": "2025-02-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "281984": {
+    "first_air_date": "2025-06-12",
+    "last_air_date": "2025-06-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "281999": {
+    "first_air_date": "2025-01-27",
+    "last_air_date": "2025-01-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "282405": {
+    "first_air_date": "2025-01-29",
+    "last_air_date": "2025-01-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "282803": {
+    "first_air_date": "2025-01-14",
+    "last_air_date": "2026-03-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "282986": {
+    "first_air_date": "2025-01-17",
+    "last_air_date": "2026-05-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "283197": {
+    "first_air_date": "2025-02-17",
+    "last_air_date": "2025-02-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "283583": {
+    "first_air_date": "2025-02-06",
+    "last_air_date": "2025-02-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "283630": {
+    "first_air_date": "2025-02-03",
+    "last_air_date": "2026-01-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "284053": {
+    "first_air_date": "2025-02-18",
+    "last_air_date": "2025-02-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "284443": {
+    "first_air_date": "2025-02-16",
+    "last_air_date": "2025-02-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "284647": {
+    "first_air_date": "2016-01-23",
+    "last_air_date": "2017-01-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "284974": {
+    "first_air_date": "2025-02-22",
+    "last_air_date": "2025-03-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "285084": {
+    "first_air_date": "2025-03-31",
+    "last_air_date": "2025-03-31",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "285759": {
+    "first_air_date": "2025-03-04",
+    "last_air_date": "2025-05-13",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "285970": {
+    "first_air_date": "2025-03-07",
+    "last_air_date": "2025-03-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "286269": {
+    "first_air_date": "2025-03-24",
+    "last_air_date": "2026-05-18",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "286323": {
+    "first_air_date": "2025-03-18",
+    "last_air_date": "2025-04-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "286348": {
+    "first_air_date": "2025-05-27",
+    "last_air_date": "2025-05-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "286840": {
+    "first_air_date": "2025-04-16",
+    "last_air_date": "2025-04-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "288119": {
+    "first_air_date": "2025-07-25",
+    "last_air_date": "2025-07-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "289123": {
+    "first_air_date": "2025-05-14",
+    "last_air_date": "2025-05-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "289196": {
+    "first_air_date": "2025-05-05",
+    "last_air_date": "2026-10-27",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "289486": {
+    "first_air_date": "2025-05-26",
+    "last_air_date": "2025-05-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "290760": {
+    "first_air_date": "2025-05-18",
+    "last_air_date": "2026-10-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "291926": {
+    "first_air_date": "2025-06-01",
+    "last_air_date": "2025-06-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "291945": {
+    "first_air_date": "2025-05-20",
+    "last_air_date": "2025-05-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "292175": {
+    "first_air_date": "2025-06-03",
+    "last_air_date": "2025-07-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "292286": {
+    "first_air_date": "2025-05-25",
+    "last_air_date": "2025-05-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "292460": {
+    "first_air_date": "2025-06-05",
+    "last_air_date": "2025-06-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "292663": {
+    "first_air_date": "2025-03-24",
+    "last_air_date": "2026-10-15",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "293130": {
+    "first_air_date": "2025-06-19",
+    "last_air_date": "2025-06-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "293155": {
+    "first_air_date": "2025-06-26",
+    "last_air_date": "2025-07-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "293496": {
+    "first_air_date": "2025-07-17",
+    "last_air_date": "2025-08-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "293691": {
+    "first_air_date": "2025-07-11",
+    "last_air_date": "2025-07-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "294119": {
+    "first_air_date": "2025-07-01",
+    "last_air_date": "2025-07-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "294219": {
+    "first_air_date": "2025-07-14",
+    "last_air_date": "2026-08-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "294611": {
+    "first_air_date": "2025-07-30",
+    "last_air_date": "2025-07-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "294633": {
+    "first_air_date": "2025-06-21",
+    "last_air_date": "2025-06-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "294726": {
+    "first_air_date": "2025-07-16",
+    "last_air_date": "2025-07-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "294834": {
+    "first_air_date": "2025-07-21",
+    "last_air_date": "2025-07-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "294835": {
+    "first_air_date": "2025-07-30",
+    "last_air_date": "2025-07-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "296198": {
+    "first_air_date": "2025-08-05",
+    "last_air_date": "2025-08-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "296219": {
+    "first_air_date": "2025-07-15",
+    "last_air_date": "2026-09-02",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "296619": {
+    "first_air_date": "2025-07-15",
+    "last_air_date": "2025-07-16",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "297791": {
+    "first_air_date": "2025-09-05",
+    "last_air_date": "2025-09-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "298809": {
+    "first_air_date": "2025-09-16",
+    "last_air_date": "2025-11-18",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "298867": {
+    "first_air_date": "2025-09-12",
+    "last_air_date": "2025-09-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "299395": {
+    "first_air_date": "2025-09-25",
+    "last_air_date": "2025-09-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "299462": {
+    "first_air_date": "2025-08-29",
+    "last_air_date": "2025-09-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "299893": {
+    "first_air_date": "2025-09-17",
+    "last_air_date": "2025-09-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "300683": {
+    "first_air_date": "2025-09-14",
+    "last_air_date": "2025-12-07",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "300719": {
+    "first_air_date": "2025-09-27",
+    "last_air_date": "2025-11-29",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "301147": {
+    "first_air_date": "2025-10-01",
+    "last_air_date": "2025-11-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "301498": {
+    "first_air_date": "2025-10-22",
+    "last_air_date": "2025-10-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "301702": {
+    "first_air_date": "2025-10-06",
+    "last_air_date": "2025-10-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "302642": {
+    "first_air_date": "2025-10-06",
+    "last_air_date": "2025-10-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "302679": {
+    "first_air_date": "2025-11-04",
+    "last_air_date": "2025-12-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "302969": {
+    "first_air_date": "2025-10-13",
+    "last_air_date": "2025-10-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "303055": {
+    "first_air_date": "2024-09-04",
+    "last_air_date": "2025-09-24",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "303154": {
+    "first_air_date": "2025-10-04",
+    "last_air_date": "2025-10-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "303155": {
+    "first_air_date": "2025-12-17",
+    "last_air_date": "2025-12-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "303250": {
+    "first_air_date": "2025-10-19",
+    "last_air_date": "2025-10-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "303543": {
+    "first_air_date": "2025-10-22",
+    "last_air_date": "2025-11-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "303715": {
+    "first_air_date": "2025-11-09",
+    "last_air_date": "2025-12-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "303740": {
+    "first_air_date": "2025-11-13",
+    "last_air_date": "2025-11-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "303824": {
+    "first_air_date": "2025-04-26",
+    "last_air_date": "2025-10-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "304115": {
+    "first_air_date": "2025-11-26",
+    "last_air_date": "2025-11-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "304307": {
+    "first_air_date": "2025-11-19",
+    "last_air_date": "2025-11-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "304488": {
+    "first_air_date": "2025-10-31",
+    "last_air_date": "2025-10-31",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "304550": {
+    "first_air_date": "2026-04-21",
+    "last_air_date": "2026-04-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "304806": {
+    "first_air_date": "2026-01-18",
+    "last_air_date": "2026-02-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "304849": {
+    "first_air_date": "2025-11-13",
+    "last_air_date": "2025-11-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "304936": {
+    "first_air_date": "2025-11-05",
+    "last_air_date": "2025-11-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "305301": {
+    "first_air_date": "2025-11-04",
+    "last_air_date": "2025-11-25",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "305997": {
+    "first_air_date": "2026-01-07",
+    "last_air_date": "2026-10-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "306068": {
+    "first_air_date": "2025-11-27",
+    "last_air_date": "2025-11-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "306593": {
+    "first_air_date": "2025-12-03",
+    "last_air_date": "2025-12-04",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "307511": {
+    "first_air_date": "2025-12-02",
+    "last_air_date": "2025-12-02",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "307967": {
+    "first_air_date": "2026-01-07",
+    "last_air_date": "2026-02-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "308291": {
+    "first_air_date": "2025-09-30",
+    "last_air_date": "2025-09-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "308606": {
+    "first_air_date": "2026-01-09",
+    "last_air_date": "2026-01-09",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "308762": {
+    "first_air_date": "2026-01-01",
+    "last_air_date": "2026-03-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "308767": {
+    "first_air_date": "2026-01-20",
+    "last_air_date": "2026-01-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "308989": {
+    "first_air_date": "2025-12-29",
+    "last_air_date": "2025-12-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "309732": {
+    "first_air_date": "2026-01-13",
+    "last_air_date": "2026-03-03",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "309810": {
+    "first_air_date": "2026-01-06",
+    "last_air_date": "2026-01-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "310369": {
+    "first_air_date": "2026-01-08",
+    "last_air_date": "2026-01-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "310382": {
+    "first_air_date": "2026-01-22",
+    "last_air_date": "2026-03-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "310392": {
+    "first_air_date": "2026-01-09",
+    "last_air_date": "2026-01-09",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "311043": {
+    "first_air_date": "2026-01-11",
+    "last_air_date": "2026-01-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312025": {
+    "first_air_date": "2025-11-13",
+    "last_air_date": "2026-02-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "312506": {
+    "first_air_date": "2026-02-11",
+    "last_air_date": "2026-02-11",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312508": {
+    "first_air_date": "2026-02-19",
+    "last_air_date": "2026-02-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312521": {
+    "first_air_date": "2026-01-27",
+    "last_air_date": "2026-09-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "312530": {
+    "first_air_date": "2026-02-19",
+    "last_air_date": "2026-02-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312626": {
+    "first_air_date": "2026-02-04",
+    "last_air_date": "2026-02-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312722": {
+    "first_air_date": "2026-02-18",
+    "last_air_date": "2026-02-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "312958": {
+    "first_air_date": "2026-02-01",
+    "last_air_date": "2026-02-01",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "313129": {
+    "first_air_date": "2025-11-03",
+    "last_air_date": "2026-01-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "313228": {
+    "first_air_date": "2026-02-20",
+    "last_air_date": "2026-03-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "313338": {
+    "first_air_date": "2026-03-06",
+    "last_air_date": "2026-03-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "313410": {
+    "first_air_date": "2026-02-25",
+    "last_air_date": "2026-02-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "313808": {
+    "first_air_date": "2026-07-14",
+    "last_air_date": "2026-07-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "313891": {
+    "first_air_date": "2026-02-23",
+    "last_air_date": "2026-03-16",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "314382": {
+    "first_air_date": "2026-04-10",
+    "last_air_date": "2026-05-01",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "315092": {
+    "first_air_date": "2026-03-05",
+    "last_air_date": "2026-05-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "315213": {
+    "first_air_date": "2026-03-06",
+    "last_air_date": "2026-03-06",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "315386": {
+    "first_air_date": "2026-02-28",
+    "last_air_date": "2026-02-28",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "315755": {
+    "first_air_date": "2026-03-05",
+    "last_air_date": "2026-03-05",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "315837": {
+    "first_air_date": "2026-03-31",
+    "last_air_date": "2026-05-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "316295": {
+    "first_air_date": "2026-03-27",
+    "last_air_date": "2026-03-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "316356": {
+    "first_air_date": "2026-03-10",
+    "last_air_date": "2026-03-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "316790": {
+    "first_air_date": "2026-03-26",
+    "last_air_date": "2026-03-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "316881": {
+    "first_air_date": "2026-03-18",
+    "last_air_date": "2026-09-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "316898": {
+    "first_air_date": "2026-04-08",
+    "last_air_date": "2026-04-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "316961": {
+    "first_air_date": "2026-03-19",
+    "last_air_date": "2026-04-02",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "317020": {
+    "first_air_date": "2026-03-09",
+    "last_air_date": "2026-03-09",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "317265": {
+    "first_air_date": "2026-04-01",
+    "last_air_date": "2026-05-20",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "317464": {
+    "first_air_date": "2026-03-25",
+    "last_air_date": "2026-04-01",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "317607": {
+    "first_air_date": "2026-03-26",
+    "last_air_date": "2026-03-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "318262": {
+    "first_air_date": "2026-04-29",
+    "last_air_date": "2026-04-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "318585": {
+    "first_air_date": "2026-02-27",
+    "last_air_date": "2026-02-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "318661": {
+    "first_air_date": "2026-03-12",
+    "last_air_date": "2026-05-07",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320235": {
+    "first_air_date": "2025-11-15",
+    "last_air_date": "2026-06-17",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320280": {
+    "first_air_date": "2025-07-16",
+    "last_air_date": "2025-08-06",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320419": {
+    "first_air_date": "2026-04-22",
+    "last_air_date": "2026-04-22",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320533": {
+    "first_air_date": "2026-05-05",
+    "last_air_date": "2026-05-18",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320575": {
+    "first_air_date": "2025-12-08",
+    "last_air_date": "2026-04-20",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320673": {
+    "first_air_date": "2026-04-22",
+    "last_air_date": "2026-05-13",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "320987": {
+    "first_air_date": "2026-04-27",
+    "last_air_date": "2026-11-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "321112": {
+    "first_air_date": "2026-05-14",
+    "last_air_date": "2026-05-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "321291": {
+    "first_air_date": "2026-04-30",
+    "last_air_date": "2026-04-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "321315": {
+    "first_air_date": "2026-05-11",
+    "last_air_date": "2026-10-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "321598": {
+    "first_air_date": "2026-05-25",
+    "last_air_date": "2026-05-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "321722": {
+    "first_air_date": "2026-05-06",
+    "last_air_date": "2026-06-10",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "321960": {
+    "first_air_date": "2026-05-19",
+    "last_air_date": "2026-05-19",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "322126": {
+    "first_air_date": "2026-05-20",
+    "last_air_date": "2026-05-20",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "322355": {
+    "first_air_date": "2026-05-12",
+    "last_air_date": "2026-05-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "322565": {
+    "first_air_date": "2026-05-15",
+    "last_air_date": "2026-05-15",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "322714": {
+    "first_air_date": "2026-06-18",
+    "last_air_date": "2026-06-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "323185": {
+    "first_air_date": "2026-05-17",
+    "last_air_date": "2026-07-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "323609": {
+    "first_air_date": "2026-05-22",
+    "last_air_date": "2026-05-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "324043": {
+    "first_air_date": "2026-06-10",
+    "last_air_date": "2026-06-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "324050": {
+    "first_air_date": "2026-05-29",
+    "last_air_date": "2026-05-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "324521": {
+    "first_air_date": "2026-06-17",
+    "last_air_date": "2026-08-05",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "324912": {
+    "first_air_date": "2026-06-02",
+    "last_air_date": "2026-08-04",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "324955": {
+    "first_air_date": "2026-06-18",
+    "last_air_date": "2026-07-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "325188": {
+    "first_air_date": "2026-07-01",
+    "last_air_date": "2026-07-01",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "325622": {
+    "first_air_date": "2026-07-13",
+    "last_air_date": "2026-07-13",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "326192": {
+    "first_air_date": "2026-07-23",
+    "last_air_date": "2026-07-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "327287": {
+    "first_air_date": "2026-10-07",
+    "last_air_date": "2026-10-21",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "327368": {
+    "first_air_date": "2020-06-01",
+    "last_air_date": "2026-10-23",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "328125": {
+    "first_air_date": "2026-07-17",
+    "last_air_date": "2026-07-17",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "328470": {
+    "first_air_date": "2026-07-16",
+    "last_air_date": "2026-07-17",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "328719": {
+    "first_air_date": "2026-07-15",
+    "last_air_date": "2026-09-02",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "328735": {
+    "first_air_date": "2026-07-29",
+    "last_air_date": "2026-07-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "328821": {
+    "first_air_date": "2026-07-27",
+    "last_air_date": "2026-08-31",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "329524": {
+    "first_air_date": "2026-09-30",
+    "last_air_date": "2026-09-30",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "329599": {
+    "first_air_date": "2026-07-23",
+    "last_air_date": "2026-07-23",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "329692": {
+    "first_air_date": "2026-05-19",
+    "last_air_date": "2026-05-19",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "329941": {
+    "first_air_date": "2026-07-29",
+    "last_air_date": "2026-07-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "330050": {
+    "first_air_date": "2026-07-27",
+    "last_air_date": "2026-07-27",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "330131": {
+    "first_air_date": "2026-08-08",
+    "last_air_date": "2026-08-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "330292": {
+    "first_air_date": "2026-07-30",
+    "last_air_date": "2026-07-30",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "330320": {
+    "first_air_date": "2026-08-12",
+    "last_air_date": "2026-08-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "330654": {
+    "first_air_date": "2026-08-10",
+    "last_air_date": "2026-09-21",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "330968": {
+    "first_air_date": "2026-09-07",
+    "last_air_date": "2026-09-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "331616": {
+    "first_air_date": "2026-08-26",
+    "last_air_date": "2026-08-26",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "331674": {
+    "first_air_date": "2026-08-14",
+    "last_air_date": "2026-08-14",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "332236": {
+    "first_air_date": "2026-08-26",
+    "last_air_date": "2026-08-28",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "332910": {
+    "first_air_date": "2026-09-10",
+    "last_air_date": "2026-09-24",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "333058": {
+    "first_air_date": "2026-09-01",
+    "last_air_date": "2026-09-01",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "333396": {
+    "first_air_date": "2026-08-17",
+    "last_air_date": "2026-08-17",
+    "status": "In Production",
+    "checkedAt": "2026-11-17"
+  },
+  "334011": {
+    "first_air_date": "2026-09-10",
+    "last_air_date": "2026-09-10",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "334435": {
+    "first_air_date": "2026-09-14",
+    "last_air_date": "2026-10-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "335350": {
+    "first_air_date": "2026-09-15",
+    "last_air_date": "2026-10-20",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "335651": {
+    "first_air_date": "2026-09-18",
+    "last_air_date": "2026-09-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "336193": {
+    "first_air_date": "2026-03-04",
+    "last_air_date": "2026-03-18",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "336418": {
+    "first_air_date": "2026-10-11",
+    "last_air_date": "2026-10-25",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "336764": {
+    "first_air_date": "2026-09-22",
+    "last_air_date": "2026-09-29",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "337609": {
+    "first_air_date": "2026-10-22",
+    "last_air_date": "2026-10-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "337700": {
+    "first_air_date": "2026-10-07",
+    "last_air_date": "2026-10-21",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "337789": {
+    "first_air_date": "2026-10-08",
+    "last_air_date": "2026-10-08",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "337800": {
+    "first_air_date": "2026-10-22",
+    "last_air_date": "2026-10-22",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "339333": {
+    "first_air_date": "2026-10-18",
+    "last_air_date": "2026-11-08",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "339934": {
+    "first_air_date": "2026-11-05",
+    "last_air_date": "2026-11-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340053": {
+    "first_air_date": "2026-11-10",
+    "last_air_date": "2026-11-10",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340159": {
+    "first_air_date": "2026-10-26",
+    "last_air_date": "2026-10-26",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340276": {
+    "first_air_date": "2026-11-09",
+    "last_air_date": null,
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340285": {
+    "first_air_date": "2026-10-29",
+    "last_air_date": "2026-10-29",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "340615": {
+    "first_air_date": "2026-11-23",
+    "last_air_date": null,
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340622": {
+    "first_air_date": "2015-08-10",
+    "last_air_date": "2024-12-12",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "340816": {
+    "first_air_date": "2026-11-12",
+    "last_air_date": null,
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "341769": {
+    "first_air_date": "2026-11-12",
+    "last_air_date": "2026-11-12",
+    "status": "Ended",
+    "checkedAt": "2026-11-17"
+  },
+  "341813": {
+    "first_air_date": "2026-11-09",
+    "last_air_date": "2026-11-09",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  },
+  "341950": {
+    "first_air_date": "2026-11-13",
+    "last_air_date": "2026-11-13",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-17"
+  }
+}
