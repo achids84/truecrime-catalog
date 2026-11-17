@@ -48,7 +48,6 @@ const paramsOf = (f) => f.calls.map((c) => new URL(c.url));
 test('each pass runs queries a and b, 10 pages each, with its own sort', async () => {
   const cases = [
     ['popularity', 'movie', 'popularity.desc', null],
-    ['popular', 'movie', 'vote_count.desc', null],
     ['new', 'movie', 'primary_release_date.desc', 'primary_release_date.lte'],
     ['new', 'tv', 'first_air_date.desc', 'first_air_date.lte'],
   ];
@@ -77,7 +76,7 @@ test('each pass runs queries a and b, 10 pages each, with its own sort', async (
 
 test('a pass stops at total_pages when under 10', async () => {
   const f = mockFetch(() => ({ total_pages: 2, results: [mk(1)] }));
-  await buildPass(client(f), 'tv', 'popular', '2026-11-17');
+  await buildPass(client(f), 'tv', 'popularity', '2026-11-17');
   assert.equal(f.calls.length, 4);
 });
 
@@ -88,7 +87,7 @@ test('fetchTrending returns raw items from pages 1..20 in order', async () => {
   assert.ok(f.calls.every((c) => new URL(c.url).pathname === '/3/trending/tv/week'));
 });
 
-test('Trending membership: genre rule (99 and 80) or union, in trending order', () => {
+test('Trending membership: genre rule (99 and 80) or the two-pass union (P, New), in trending order', () => {
   const raw = [
     mk(1, { genre_ids: [99, 35] }), // not in union, only one of the two genres: out
     mk(2, { genre_ids: [99, 80] }), // genre rule: in, though in no pass
@@ -102,4 +101,18 @@ test('Trending membership: genre rule (99 and 80) or union, in trending order', 
   const got = qualifyTrending('movie', raw, new Set([3]));
   assert.deepEqual(got.map((x) => x.id), [2, 3, 7]);
   assert.equal(got[0].name, 'T2');
+});
+
+test('Trending membership uses only P and New: ids from the union qualify, others do not', () => {
+  const P = new Set([10]);
+  const N = new Set([20]);
+  const union = new Set([...P, ...N]);
+  const raw = [mk(10, { genre_ids: [18] }), mk(20, { genre_ids: [18] }), mk(30, { genre_ids: [18] })];
+  assert.deepEqual(qualifyTrending('tv', raw, union).map((x) => x.id), [10, 20]);
+});
+
+test('buildPass rejects the removed vote_count pass', async () => {
+  const f = mockFetch(() => ({ total_pages: 1, results: [] }));
+  await assert.rejects(buildPass(client(f), 'movie', 'popular', '2026-11-17'));
+  assert.equal(f.calls.length, 0);
 });

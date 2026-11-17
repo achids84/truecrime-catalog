@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTrending, buildNew, buildPopular, contributions } from '../src/lists.js';
+import { buildTrending, buildNew, contributions } from '../src/lists.js';
 import { toMeta, toMetas } from '../src/meta.js';
 
 const it = (id, o = {}) => ({
@@ -21,19 +21,9 @@ test('New: only on/before today, newest first, ties by popularity', () => {
   assert.deepEqual(buildNew(u, '2026-11-17').map((x) => x.id), [6, 4, 3, 1]);
 });
 
-test('Popular: vote_count desc, ties by popularity', () => {
-  const u = [
-    it(1, { vote_count: 10, popularity: 1 }),
-    it(2, { vote_count: 99 }),
-    it(3, { vote_count: 10, popularity: 9 }),
-  ];
-  assert.deepEqual(buildPopular(u).map((x) => x.id), [2, 3, 1]);
-});
-
 test('lists are capped at 300', () => {
   const u = range(350).map((i) => it(i, { date: '2020-01-01' }));
   assert.equal(buildNew(u, '2026-01-01').length, 300);
-  assert.equal(buildPopular(u).length, 300);
 });
 
 test('Trending: qualified items kept in order, no padding when >= 20', () => {
@@ -77,15 +67,10 @@ test('New is cut from its own pass: a recent low-popularity title beats popular 
   assert.equal(fromN[0].date, '2026-11-10');
 });
 
-test('Popular is cut from the vote_count pass and sorted by vote_count', () => {
-  const V = [it(1, { vote_count: 50000, popularity: 1 }), it(2, { vote_count: 90000, popularity: 1 })];
-  assert.deepEqual(buildPopular(V).map((x) => x.id), [2, 1]);
-});
-
 test('contributions counts each pass, overlaps in each, and genre-rule-only items', () => {
-  const sets = { P: new Set([1, 2]), New: new Set([2, 3]), Popular: new Set([9]) };
+  const sets = { P: new Set([1, 2]), New: new Set([2, 3]) };
   const c = contributions([it(1), it(2), it(3), it(4), it(5)], sets);
-  assert.deepEqual(c, { P: 2, New: 2, Popular: 0, genreRule: 2 });
+  assert.deepEqual(c, { P: 2, New: 2, genreRule: 2 });
 });
 
 test('meta has exactly the preview fields', () => {
