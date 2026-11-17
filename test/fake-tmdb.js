@@ -18,7 +18,7 @@ function discoverItem(id, sort, lte) {
   let date;
   let popularity;
   let vote_count;
-  if (sort === 'popularity.desc') {
+  if (sort === 'popularity.desc' || sort === 'vote_average.desc') {
     date = id % 7 === 0 ? '2027-03-01' : `20${10 + (id % 15)}-0${1 + (id % 9)}-1${id % 9}`;
     popularity = 1000 - id;
     vote_count = (id * 37) % 500;
@@ -57,8 +57,9 @@ export function fakeTmdb(opts = {}) {
       const sort = q.get('sort_by');
       const lte = q.get('primary_release_date.lte') ?? q.get('first_air_date.lte');
       const isB = Boolean(q.get('with_keywords'));
-      if (sort !== 'popularity.desc' && !sort.endsWith('date.desc')) return jsonRes({}, 400); // no other sort is used
-      const base = sort === 'popularity.desc' ? (isB ? 100 : 0) : isB ? 1100 : 1000;
+      if (sort !== 'popularity.desc' && sort !== 'vote_average.desc' && !sort.endsWith('date.desc')) return jsonRes({}, 400);
+      // vote_average.desc is only used by discover catalogues: ids 2001.. with falling vote_average
+      const base = sort === 'vote_average.desc' ? 2000 : sort === 'popularity.desc' ? (isB ? 100 : 0) : isB ? 1100 : 1000;
       const results = Array.from({ length: 20 }, (_, i) => discoverItem(pageIds(base, page, i), sort, lte));
       return { page, total_pages: 50, results };
     }

@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Check catalogue config
+        run: npm run check # offline; a bad config fails here, before any TMDB call and before the deploy job
       - name: Build
         run: npm run build:ci
         env:
