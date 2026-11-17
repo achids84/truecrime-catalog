@@ -13,6 +13,9 @@ export const MAX_TRENDING_PAGES = 20;
 export const RECENT_DAYS = 120;
 export const MAX_RECENT_PAGES = 3;
 
+// YYYY-MM-DD, n days before `today` (YYYY-MM-DD).
+export const daysBefore = (today, n) => new Date(Date.parse(today) - n * 86400000).toISOString().slice(0, 10);
+
 export class KeywordMismatchError extends Error {}
 
 // Stop with a clear error if 33722 is not the "true crime" keyword.
@@ -84,10 +87,10 @@ export async function buildPass(client, kind, pass, today) {
 }
 
 // Series only: titles with an episode aired in the last RECENT_DAYS days, by popularity, with the
-// same genre and keyword sets as the other passes. Catches old shows with a new season. It only
-// widens the New pool; it is never part of the Trending union.
+// same genre and keyword sets as the other passes. Catches old shows with a new season. It feeds
+// tc-recent only; it is never part of tc-new or the Trending union.
 export async function buildRecentPass(client, today) {
-  const gte = new Date(Date.parse(today) - RECENT_DAYS * 86400000).toISOString().slice(0, 10);
+  const gte = daysBefore(today, RECENT_DAYS);
   const extra = { sort_by: 'popularity.desc', 'air_date.gte': gte };
   const [a, b] = await Promise.all([
     discoverPages(client, 'tv', { ...extra, with_genres: '99,80' }, MAX_RECENT_PAGES),

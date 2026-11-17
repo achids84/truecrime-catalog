@@ -11,6 +11,9 @@ export const CATALOGS = [
   { id: 'tc-trending', name: 'Trending this week' },
   { id: 'tc-new', name: 'New' },
 ];
+// Series only, listed after tc-new. Not part of the 20-item failure rule (it may legitimately be short).
+export const RECENT_CATALOG = { id: 'tc-recent', name: 'New episodes' };
+export const catalogsFor = (type) => (type === 'series' ? [...CATALOGS, RECENT_CATALOG] : CATALOGS);
 export const TMDB_ATTRIBUTION =
   'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
@@ -25,7 +28,7 @@ export function buildManifest(version) {
     resources: ['catalog'],
     types: [...TYPES],
     catalogs: TYPES.flatMap((type) =>
-      CATALOGS.map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
+      catalogsFor(type).map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
     ),
   };
 }
@@ -52,7 +55,7 @@ export function assertMinimums(catalogs, min = MIN_ITEMS) {
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
 export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }) {
   const counts = {};
-  for (const type of TYPES) for (const c of CATALOGS) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
+  for (const type of TYPES) for (const c of catalogsFor(type)) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
   return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions, ...(seriesNew ? { seriesNew } : {}) };
 }
 
@@ -97,7 +100,7 @@ export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, 
   files.set('index.html', renderIndexHtml());
   files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }), null, 2) + '\n');
   for (const type of TYPES) {
-    for (const c of CATALOGS) {
+    for (const c of catalogsFor(type)) {
       const all = catalogs[type][c.id];
       // Base file is always written (the first PAGE_SIZE titles). Then one page per skip that
       // is a multiple of SKIP_STEP and below the list size, so apps whose rail holds a count

@@ -1,6 +1,6 @@
 // The two list builders. Items are normalized TMDB items that already carry item.imdb.
 // All builders are pure and drop repeated IMDb ids before applying the cap.
-import { byPopularity } from './universe.js';
+import { byPopularity, daysBefore, RECENT_DAYS } from './universe.js';
 import { dedupeByImdb } from './meta.js';
 
 export const MAX_ITEMS = 300;
@@ -34,6 +34,20 @@ export function buildNew(items, today, { max = MAX_ITEMS } = {}) {
       .filter((it) => it.date && it.date <= today)
       .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : byPopularity(a, b))),
   ).slice(0, max);
+}
+
+// Recent (series only, tc-recent): items carry `sortDate` (last air date, else first air date).
+// Only titles whose sortDate is within the last RECENT_DAYS days (and not in the future) qualify,
+// newest first, ties by popularity, capped at `max`. `total` is the count before the cap.
+export const RECENT_MAX = 100;
+export function buildRecent(items, today, { days = RECENT_DAYS, max = RECENT_MAX } = {}) {
+  const cutoff = daysBefore(today, days);
+  const all = dedupeByImdb(
+    items
+      .filter((it) => it.sortDate && it.sortDate >= cutoff && it.sortDate <= today)
+      .sort((a, b) => (a.sortDate < b.sortDate ? 1 : a.sortDate > b.sortDate ? -1 : byPopularity(a, b))),
+  );
+  return { items: all.slice(0, max), total: all.length };
 }
 
 // How many of `items` each pass (P, New) contributed (an item in several passes counts in each);
