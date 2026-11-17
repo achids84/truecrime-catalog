@@ -1,4 +1,4 @@
-# ADDON-5b: series New sorted by last air date
+# ADDON-5b / 5c: series recent episodes
 
 Branch `addon-5b`, from `main` at 10833c6. Unit-tested against a mocked TMDB plus one real build to a scratch directory. Not deployed. Not pushed.
 
@@ -19,3 +19,16 @@ Branch `addon-5b`, from `main` at 10833c6. Unit-tested against a mocked TMDB plu
 ## Side effect to know about
 
 The recent pass also pulls in long-running series (news magazines and similar) whose latest episode is recent. They enter tc-new and rank high.
+
+## ADDON-5c: tc-new restored, tc-recent added
+
+The 5b sort put 17 weekly or long-running shows (Dateline, 48 Hours, ...) into the top 30 of tc-new, so 5c reverses it. Commits on top of 35d4873, no history rewrite.
+
+- `tc-new` (series and movie), `tc-trending` and every movie file are byte-identical to main (10833c6) against the same mocked TMDB. `buildNew` is main's again; the recent pass and the date cache do not feed it.
+- New series-only catalogue `tc-recent`, name "New episodes", after `tc-new` in the manifest. Input: union of the New pass, pass P and the recent pass by TMDB id. Key `sortDate` = `last_air_date`, else `first_air_date`. Only titles whose key is within `RECENT_DAYS` = 90 days (and not in the future), ties by popularity, capped at 100 (`buildRecent` in `src/lists.js`).
+- `RECENT_DAYS` (`src/universe.js`) is one constant: 120 to 90 for the recent discover pass and the tc-recent window.
+- Cache rule unchanged: Ended and Canceled are cached for good, everything else is refreshed each build; a failed lookup keeps the cached value or falls back to `first_air_date` and never fails the build.
+- `tc-recent` is exempt from the 20-title failure rule. `status.json` has a `series/tc-recent` count and a `seriesNew` block (recentAdded, lookups, lookupsFailed, recentBeforeCap, recentKeyFromFirst).
+- Version stays 0.1.3. No workflow change in 5c. The landing page text (`index.html`) still says two catalogues per type.
+
+Note that tc-recent includes weekly and long-running shows by design; it is a recent-episode view, not a new-show view.
