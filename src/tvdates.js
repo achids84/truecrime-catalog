@@ -40,11 +40,14 @@ export async function resolveTvDates(items, map, client, now = Date.now()) {
     todo.map(async (it) => {
       try {
         const r = await client.get(`/tv/${it.id}`, { language: 'en-US' });
+        const old = map[it.id];
         map[it.id] = {
           first_air_date: r?.first_air_date || null,
           last_air_date: r?.last_air_date || null,
           status: r?.status ?? null,
           checkedAt: today,
+          // the Cinemeta fields belong to resolveCinemeta; a TMDB refresh must keep them
+          ...(old?.cinemetaCheckedAt ? { cinemeta_last: old.cinemeta_last ?? null, cinemetaCheckedAt: old.cinemetaCheckedAt } : {}),
         };
       } catch {
         failed++; // degrade: keep the cached entry, or none
