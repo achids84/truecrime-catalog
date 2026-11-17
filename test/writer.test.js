@@ -10,15 +10,15 @@ import {
 const metas = (n, prefix = 'tt') =>
   Array.from({ length: n }, (_, i) => ({ id: `${prefix}${i}`, type: 'movie', name: `n${i}` }));
 const cats = (n) => ({
-  movie: { 'tc-trending': metas(n), 'tc-new': metas(n), 'tc-popular': metas(n) },
-  series: { 'tc-trending': metas(n), 'tc-new': metas(n), 'tc-popular': metas(n) },
+  movie: { 'tc-trending': metas(n), 'tc-new': metas(n) },
+  series: { 'tc-trending': metas(n), 'tc-new': metas(n) },
 });
 const plan = (n) =>
   planOutput({
     version: '1.2.3', builtAt: '2026-11-17T00:00:00.000Z', catalogs: cats(n),
     skippedNoImdb: { movie: 4, series: 2 }, padded: { movie: 0, series: 5 },
     newestNew: { movie: '2026-11-16', series: null },
-    contributions: { 'movie/tc-new': { P: 1, New: 25, Popular: 2, genreRule: 0 } },
+    contributions: { 'movie/tc-new': { P: 1, New: 25, genreRule: 0 } },
   });
 
 test('manifest shape', () => {
@@ -28,16 +28,28 @@ test('manifest shape', () => {
   assert.equal(m.name, 'True Crime Documentaries');
   assert.deepEqual(m.resources, ['catalog']);
   assert.deepEqual(m.types, ['movie', 'series']);
-  assert.equal(m.catalogs.length, 6);
+  assert.equal(m.catalogs.length, 4);
   assert.ok(!('addonCatalogs' in m) && !('idPrefixes' in m));
+});
+
+test('no tc-popular anywhere in the manifest or the planned files', () => {
+  const m = buildManifest('1.0.0');
+  assert.ok(!JSON.stringify(m).includes('tc-popular'));
+  assert.ok(!JSON.stringify(m).toLowerCase().includes('popular'));
+  assert.deepEqual(m.catalogs.map((c) => `${c.type}/${c.id}`), [
+    'movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new',
+  ]);
+  const files = plan(30);
+  assert.ok([...files.keys()].every((k) => !k.includes('popular')));
+  assert.ok([...files.values()].every((v) => !v.includes('tc-popular')));
 });
 
 test('catalogue ids, names, types and extra', () => {
   const m = buildManifest('1.0.0');
   for (const type of ['movie', 'series']) {
     const mine = m.catalogs.filter((c) => c.type === type);
-    assert.deepEqual(mine.map((c) => c.id), ['tc-trending', 'tc-new', 'tc-popular']);
-    assert.deepEqual(mine.map((c) => c.name), ['Trending this week', 'New', 'Popular']);
+    assert.deepEqual(mine.map((c) => c.id), ['tc-trending', 'tc-new']);
+    assert.deepEqual(mine.map((c) => c.name), ['Trending this week', 'New']);
   }
   for (const c of m.catalogs) assert.deepEqual(c.extra, [{ name: 'skip' }]); // no search, no genre
 });
@@ -45,7 +57,7 @@ test('catalogue ids, names, types and extra', () => {
 test('paging file names and sizes are 100, 100, 100', () => {
   const files = plan(300);
   for (const type of ['movie', 'series']) {
-    for (const id of ['tc-trending', 'tc-new', 'tc-popular']) {
+    for (const id of ['tc-trending', 'tc-new']) {
       const sizes = [
         `catalog/${type}/${id}.json`,
         `catalog/${type}/${id}/skip=100.json`,
@@ -74,11 +86,11 @@ test('status.json has build time, counts, skipped and padded', () => {
   const s = JSON.parse(plan(25).get('status.json'));
   assert.equal(s.builtAt, '2026-11-17T00:00:00.000Z');
   assert.equal(s.counts['movie/tc-new'], 25);
-  assert.equal(Object.keys(s.counts).length, 6);
+  assert.equal(Object.keys(s.counts).length, 4);
   assert.deepEqual(s.skippedNoImdb, { movie: 4, series: 2 });
   assert.deepEqual(s.padded, { movie: 0, series: 5 });
   assert.deepEqual(s.newestNew, { movie: '2026-11-16', series: null });
-  assert.deepEqual(s.contributions['movie/tc-new'], { P: 1, New: 25, Popular: 2, genreRule: 0 });
+  assert.deepEqual(s.contributions['movie/tc-new'], { P: 1, New: 25, genreRule: 0 });
 });
 
 test('index.html carries the TMDB attribution line and install link code', () => {

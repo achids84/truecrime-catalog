@@ -34,20 +34,19 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, '9.9.9');
   const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
-  // pools per kind: P 1..300, N 1001..1300, V 2001..2300 (+ genre-rule trending id 5001);
-  // ids divisible by 25 have no IMDb id -> 12 per pass = 36 skipped
-  assert.equal(status.skippedNoImdb.movie, 36);
-  assert.equal(status.counts['movie/tc-popular'], 288);
+  // pools per kind: P 1..300, N 1001..1300 (+ genre-rule trending id 5001);
+  // ids divisible by 25 have no IMDb id -> 12 per pass = 24 skipped
+  assert.equal(status.skippedNoImdb.movie, 24);
   assert.equal(status.counts['movie/tc-new'], 288);
   assert.equal(status.padded.movie, 0);
 
   // new status fields: newest release date in New, and per catalogue pass contributions
   assert.deepEqual(status.newestNew, { movie: '2026-11-17', series: '2026-11-17' });
   for (const type of ['movie', 'series']) {
-    assert.deepEqual(status.contributions[`${type}/tc-new`], { P: 0, New: 288, Popular: 0, genreRule: 0 });
-    assert.deepEqual(status.contributions[`${type}/tc-popular`], { P: 0, New: 0, Popular: 288, genreRule: 0 });
+    assert.deepEqual(status.contributions[`${type}/tc-new`], { P: 0, New: 288, genreRule: 0 });
+    assert.equal(status.contributions[`${type}/tc-popular`], undefined);
     // 38 P hits, the New-pass title 1001, and id 5001 admitted by the genre rule alone
-    assert.deepEqual(status.contributions[`${type}/tc-trending`], { P: 38, New: 1, Popular: 0, genreRule: 1 });
+    assert.deepEqual(status.contributions[`${type}/tc-trending`], { P: 38, New: 1, genreRule: 1 });
   }
 
   const read = async (rel) => JSON.parse(await readFile(join(p.distDir, rel), 'utf8')).metas;
@@ -57,20 +56,16 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
     ...(await read(`catalog/${type}/${id}/skip=200.json`)),
   ];
   const tmdbId = (m) => Number(m.id.slice(2)) - 1000000;
-  assert.equal((await read('catalog/movie/tc-popular.json')).length, 100);
-  assert.equal((await read('catalog/movie/tc-popular/skip=200.json')).length, 88);
+  assert.equal((await read('catalog/movie/tc-new.json')).length, 100);
+  assert.equal((await read('catalog/movie/tc-new/skip=200.json')).length, 88);
 
-  // New comes from the date pass (ids 1001..1300, low popularity), never from P or V,
+  // New comes from the date pass (ids 1001..1300, low popularity), never from P,
   // and the newest title leads
   const newest = await pages('movie', 'tc-new');
   assert.ok(newest.every((m) => tmdbId(m) >= 1001 && tmdbId(m) <= 1300));
   assert.equal(newest[0].id, 'tt1001291');
   assert.ok(newest.every((m) => Number(m.releaseInfo) <= 2026));
 
-  // Popular comes from the vote_count pass (ids 2001..2300), highest vote_count first
-  const popularAll = await pages('movie', 'tc-popular');
-  assert.ok(popularAll.every((m) => tmdbId(m) >= 2001 && tmdbId(m) <= 2300));
-  assert.equal(popularAll[0].id, 'tt1002001');
 
   // Trending: P hits in trending order (300 has no IMDb id), then the union-only title
   // (1001, found by the New pass) and the genre-rule title (5001). Strangers are excluded.
@@ -94,11 +89,28 @@ test('request budget of a cold run (empty idmap), mocked', async () => {
   const discover = count(/\/discover\//);
   const trending = count(/\/trending\//);
   const ext = count(/external_ids/);
-  assert.deepEqual([keyword, discover, trending], [1, 120, 40]); // 161 fixed
-  assert.equal(ext, 2 * 901); // 900 pass titles + 1 genre-rule trending title, per kind
-  assert.equal(f.calls.length, 1963);
+  assert.deepEqual([keyword, discover, trending], [1, 80, 40]); // 121 fixed
+  assert.equal(ext, 2 * 601); // 600 pass titles + 1 genre-rule trending title, per kind
+  assert.equal(f.calls.length, 1323);
   console.log(`# cold run: ${f.calls.length} requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids`);
 });
+test('dist/ has no tc-popular file or mention, and status.json has no Popular key', async () => {
+  const p = await setup();
+  await run(p, mockFetch(fakeTmdb()));
+  const files = await walk(p.distDir);
+  assert.equal(files.length, 2 * 2 * 3 + 3); // 4 catalogues x 3 pages + manifest, index, status
+  for (const file of files) {
+    assert.ok(!file.toLowerCase().includes('popular'), file);
+    assert.ok(!(await readFile(file, 'utf8')).includes('tc-popular'), file);
+  }
+  const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
+  assert.equal(manifest.catalogs.length, 4);
+  const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
+  assert.deepEqual(Object.keys(status.counts), ['movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new']);
+  assert.deepEqual(Object.keys(status.contributions).sort(), Object.keys(status.counts).sort());
+  assert.ok(!JSON.stringify(status).toLowerCase().includes('popular'));
+});
+
 test('idmap is written and reused: second run resolves nothing new', async () => {
   const p = await setup();
   const f1 = mockFetch(fakeTmdb());
@@ -170,4 +182,13 @@ test('secret scan: token appears nowhere in dist/, logs, idmap or error text', a
 test('redactor replaces the token in any string', () => {
   assert.equal(redactor('abc')('x abc y abc'), 'x [redacted] y [redacted]');
   assert.equal(redactor('')('plain'), 'plain');
+});
+
+test('manifest version comes from package.json (bumped to 0.1.1 for the catalogue change)', async () => {
+  const p = await setup();
+  await run(p, mockFetch(fakeTmdb()), { version: undefined });
+  const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+  const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
+  assert.equal(manifest.version, pkg.version);
+  assert.equal(pkg.version, '0.1.1');
 });

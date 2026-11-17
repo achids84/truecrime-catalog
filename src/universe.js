@@ -1,10 +1,9 @@
-// TMDB discovery passes. For each type, queries (a) and (b) are run once per sort order:
+// TMDB discovery passes. For each type, queries (a) and (b) are run once per pass:
 //   (a) genres 99 AND 80 (Documentary + Crime)
 //   (b) genre 99 + keyword 33722 ("true crime")
-// Passes (up to 10 pages each, per query):
+// Two passes (up to 10 pages each, per query):
 //   P   popularity.desc               -> Trending padding and Trending membership
 //   N   release date desc, <= today   -> the New catalogue
-//   V   vote_count.desc               -> the Popular catalogue
 // kind is 'movie' or 'tv' (TMDB naming); Stremio types are mapped in meta.js.
 
 export const KEYWORD_ID = 33722;
@@ -43,7 +42,6 @@ export function normalize(kind, raw) {
 export const PASS_SORT = {
   popularity: () => 'popularity.desc',
   new: (kind) => (kind === 'movie' ? 'primary_release_date.desc' : 'first_air_date.desc'),
-  popular: () => 'vote_count.desc',
 };
 
 async function discoverPages(client, kind, extra) {
@@ -70,7 +68,7 @@ export function mergeUniverse(kind, ...lists) {
   return [...seen.values()].sort(byPopularity);
 }
 
-// pass: 'popularity' | 'new' | 'popular'. today: YYYY-MM-DD (used by 'new' only).
+// pass: 'popularity' | 'new'. today: YYYY-MM-DD (used by 'new' only).
 export async function buildPass(client, kind, pass, today) {
   const extra = { sort_by: PASS_SORT[pass](kind) };
   if (pass === 'new') {
@@ -94,7 +92,7 @@ export async function fetchTrending(client, kind) {
 }
 
 // Trending membership: genre_ids contain both 99 and 80, or the id is in the union of the
-// three passes. Needs a poster. Trending order kept, duplicates dropped.
+// two passes (P and New). Needs a poster. Trending order kept, duplicates dropped.
 export function qualifyTrending(kind, rawList, unionIds) {
   const seen = new Set();
   const out = [];

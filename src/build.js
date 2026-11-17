@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
 import { confirmKeyword, buildPass, fetchTrending, qualifyTrending } from './universe.js';
-import { buildTrending, buildNew, buildPopular, contributions } from './lists.js';
+import { buildTrending, buildNew, contributions } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
 
@@ -30,27 +30,26 @@ export async function runBuild({
   await confirmKeyword(client);
 
   const kinds = ['movie', 'tv'];
-  const passes = {}; // passes[kind] = { P, N, V, trending }
+  const passes = {}; // passes[kind] = { P, N, trending }
   await Promise.all(
     kinds.map(async (kind) => {
-      const [P, N, V, trendingRaw] = await Promise.all([
+      const [P, N, trendingRaw] = await Promise.all([
         buildPass(client, kind, 'popularity', today),
         buildPass(client, kind, 'new', today),
-        buildPass(client, kind, 'popular', today),
         fetchTrending(client, kind),
       ]);
-      const unionIds = new Set([...P, ...N, ...V].map((it) => it.id));
+      const unionIds = new Set([...P, ...N].map((it) => it.id));
       const trending = qualifyTrending(kind, trendingRaw, unionIds);
-      passes[kind] = { P, N, V, trending };
-      log(`${kind}: P ${P.length}, New ${N.length}, Popular ${V.length}, trending qualified ${trending.length}`);
+      passes[kind] = { P, N, trending };
+      log(`${kind}: P ${P.length}, New ${N.length}, trending qualified ${trending.length}`);
     }),
   );
 
   // IMDb ids are resolved once for every distinct title in any pass or in Trending.
   const pool = {}; // pool[kind] = Map(tmdb id -> item)
   for (const kind of kinds) {
-    const { P, N, V, trending } = passes[kind];
-    pool[kind] = new Map([...P, ...N, ...V, ...trending].map((it) => [it.id, it]));
+    const { P, N, trending } = passes[kind];
+    pool[kind] = new Map([...P, ...N, ...trending].map((it) => [it.id, it]));
   }
   const idmap = await loadIdMap(idmapPath);
   const { fetched } = await resolveImdbIds(
@@ -74,29 +73,25 @@ export async function runBuild({
         const imdb = lookup(idmap, kind, it.id);
         return imdb ? [{ ...it, imdb }] : [];
       });
-    const { P, N, V, trending } = passes[kind];
+    const { P, N, trending } = passes[kind];
     skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
     const trend = buildTrending(attach(trending), attach(P));
     padded[type] = trend.padded;
     const newItems = buildNew(attach(N), today);
-    const popularItems = buildPopular(attach(V));
     const passSets = {
       P: new Set(P.map((it) => it.id)),
       New: new Set(N.map((it) => it.id)),
-      Popular: new Set(V.map((it) => it.id)),
     };
     newestNew[type] = newItems[0]?.date ?? null;
     contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
     contribution[`${type}/tc-new`] = contributions(newItems, passSets);
-    contribution[`${type}/tc-popular`] = contributions(popularItems, passSets);
     catalogs[type] = {
       'tc-trending': toMetas(trend.items),
       'tc-new': toMetas(newItems),
-      'tc-popular': toMetas(popularItems),
     };
     log(
       `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
-        `new ${catalogs[type]['tc-new'].length}, popular ${catalogs[type]['tc-popular'].length}, ` +
+        `new ${catalogs[type]['tc-new'].length}, ` +
         `skipped no IMDb id ${skippedNoImdb[type]}`,
     );
   }
