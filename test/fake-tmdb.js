@@ -49,8 +49,15 @@ function discoverItem(id, sort, lte) {
 // `opts.fail` forces every request to return that status; `failTv` does so for /tv/{id} only. `nullEvery`: ids divisible by it
 // have no IMDb id.
 export function fakeTmdb(opts = {}) {
-  const { trendingHits = 40, fail = null, keywordName = 'true crime', nullEvery = 25, failTv = null, tvDetail = null } = opts;
+  const { trendingHits = 40, fail = null, keywordName = 'true crime', nullEvery = 25, failTv = null, tvDetail = null, cinemeta = null, failCinemeta = null } = opts;
   return (u) => {
+    // Cinemeta (v3-cinemeta.strem.io): /meta/series/tt<N>.json; tmdb id = N - 1000000.
+    // opts.cinemeta(id) returns a videos array (default: none); opts.failCinemeta forces a status.
+    if (u.hostname === 'v3-cinemeta.strem.io') {
+      if (failCinemeta) return jsonRes({}, failCinemeta);
+      const id = Number(/tt(\d+)\.json$/.exec(u.pathname)[1]) - 1000000;
+      return { meta: { videos: cinemeta ? cinemeta(id) : [] } };
+    }
     if (fail) return jsonRes({}, fail);
     const path = u.pathname.replace(/^\/3/, '');
     const q = u.searchParams;

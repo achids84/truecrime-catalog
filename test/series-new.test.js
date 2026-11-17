@@ -10,9 +10,10 @@ import { runBuild } from '../src/build.js';
 import { buildNew, buildRecent, RECENT_MAX } from '../src/lists.js';
 import { toMeta } from '../src/meta.js';
 import { daysBefore, RECENT_DAYS } from '../src/universe.js';
-import { sortKey, resolveTvDates, needsTvLookup } from '../src/tvdates.js';
+import { sortKey, resolveTvDates, resolveCinemeta, needsTvLookup } from '../src/tvdates.js';
+import { createCinemeta, latestReleased } from '../src/cinemeta.js';
 import { createClient } from '../src/tmdb.js';
-import { mockFetch } from './helpers.js';
+import { mockFetch, jsonRes } from './helpers.js';
 import { fakeTmdb, TODAY } from './fake-tmdb.js';
 
 const TODAY_STR = '2026-11-17';
@@ -54,19 +55,106 @@ test('buildNew is first air date again, even for items that carry a sortDate', (
   assert.deepEqual(buildNew([a, b, c], TODAY_STR).map((x) => x.id), [2, 3, 1]);
 });
 
-test('sort key: last_air_date wins, null or missing falls back to first_air_date; date is untouched', () => {
+test('sort key: later of TMDB and Cinemeta, else first air date; Ended ignores Cinemeta; date untouched', () => {
   const a = item(1, { date: '2025-05-05' });
   const b = item(2, { date: '2026-11-12' });
   const c = item(3, { date: '2026-10-01' });
-  const withKey = [
-    { ...a, ...sortKey(a, { last_air_date: '2026-10-27' }) },
-    { ...b, ...sortKey(b, { last_air_date: null }) },
-    { ...c, ...sortKey(c, undefined) },
-  ];
-  assert.deepEqual(withKey.map((x) => [x.sortDate, x.sortSource]), [['2026-10-27', 'last'], ['2026-11-12', 'first'], ['2026-10-01', 'first']]);
-  assert.deepEqual(buildRecent(withKey, TODAY_STR).items.map((x) => x.id), [2, 1, 3]);
-  assert.equal(toMeta(withKey[0]).releaseInfo, '2025'); // cards keep the first-air year
-  assert.equal(withKey[0].date, '2025-05-05');
+  const d = item(4, { date: '2024-01-01' });
+  const e = item(5, { date: '2024-01-01' });
+  const key = (it, entry) => [sortKey(it, entry).sortDate, sortKey(it, entry).sortSource];
+  assert.deepEqual(key(a, { last_air_date: '2026-10-27', status: 'Returning Series' }), ['2026-10-27', 'tmdb']);
+  assert.deepEqual(key(b, { last_air_date: null, status: 'Returning Series' }), ['2026-11-12', 'first']);
+  assert.deepEqual(key(c, undefined), ['2026-10-01', 'first']);
+  // Cinemeta later than TMDB wins; earlier or equal loses; Cinemeta alone counts
+  assert.deepEqual(key(d, { last_air_date: '2026-10-19', cinemeta_last: '2026-11-17', status: 'Returning Series' }), ['2026-11-17', 'cinemeta']);
+  assert.deepEqual(key(d, { last_air_date: '2026-11-17', cinemeta_last: '2026-11-10', status: 'Returning Series' }), ['2026-11-17', 'tmdb']);
+  assert.deepEqual(key(d, { last_air_date: '2026-11-17', cinemeta_last: '2026-11-17', status: 'Returning Series' }), ['2026-11-17', 'tmdb']);
+  assert.deepEqual(key(d, { last_air_date: null, cinemeta_last: '2026-11-01', status: 'Returning Series' }), ['2026-11-01', 'cinemeta']);
+  // Ended and Canceled keep the TMDB date even with a stale Cinemeta date in the cache
+  assert.deepEqual(key(e, { last_air_date: '2026-01-01', cinemeta_last: '2026-11-01', status: 'Ended' }), ['2026-01-01', 'tmdb']);
+  assert.deepEqual(key(e, { last_air_date: null, cinemeta_last: '2026-11-01', status: 'Canceled' }), ['2024-01-01', 'first']);
+  const withKey = { ...a, ...sortKey(a, { last_air_date: '2026-10-27', status: 'Returning Series' }) };
+  assert.equal(toMeta(withKey).releaseInfo, '2025'); // cards keep the first-air year
+  assert.equal(withKey.date, '2025-05-05');
+});
+
+const vid = (season, released) => ({ season, episode: 1, released });
+
+test('Cinemeta: newest released episode; season 0 and future episodes ignored', () => {
+  const now = Date.parse('2026-11-17T12:00:00Z');
+  const meta = (videos) => ({ meta: { videos } });
+  assert.equal(latestReleased(meta([vid(2, '2026-11-10T06:00:00Z'), vid(2, '2026-11-17T06:00:00Z'), vid(1, '2026-10-01T06:00:00Z')]), now), '2026-11-17');
+  assert.equal(latestReleased(meta([vid(0, '2026-11-16T06:00:00Z'), vid(1, '2026-09-01T06:00:00Z')]), now), '2026-09-01'); // special ignored
+  assert.equal(latestReleased(meta([vid(0, '2026-11-16T06:00:00Z')]), now), null); // only specials
+  assert.equal(latestReleased(meta([vid(2, '2026-11-24T06:00:00Z'), vid(2, '2026-11-30T06:00:00Z'), vid(1, '2026-10-01T06:00:00Z')]), now), '2026-10-01'); // future ignored
+  assert.equal(latestReleased(meta([vid(2, '2026-11-17T13:00:00Z')]), now), null); // later today, after build time
+  assert.equal(latestReleased(meta([vid(1, undefined), vid(1, 'garbage'), { episode: 3, released: '2026-11-01T00:00:00Z' }]), now), null);
+  assert.equal(latestReleased({}, now), null);
+});
+
+test('Cinemeta client: follows redirects, times out, caps concurrency at 5, sends no credentials', async () => {
+  let seen;
+  const ok = createCinemeta({
+    fetchImpl: async (url, opts) => {
+      seen = [url, opts];
+      return jsonRes({ meta: { videos: [{ season: 1, released: '2026-11-01T00:00:00Z' }] } });
+    },
+  });
+  assert.equal(await ok.latest('tt1', TODAY), '2026-11-01');
+  assert.equal(seen[0], 'https://v3-cinemeta.strem.io/meta/series/tt1.json');
+  assert.equal(seen[1].redirect, 'follow');
+  assert.ok(!seen[1].headers.Authorization);
+  const slow = createCinemeta({
+    timeoutMs: 20,
+    fetchImpl: (url, { signal }) => new Promise((_, rej) => signal.addEventListener('abort', () => rej(signal.reason))),
+  });
+  await assert.rejects(slow.latest('tt2', TODAY));
+  await assert.rejects(createCinemeta({ fetchImpl: async () => jsonRes({}, 500) }).latest('tt3', TODAY), /500/);
+  let inflight = 0;
+  let peak = 0;
+  const gated = createCinemeta({
+    fetchImpl: async () => {
+      inflight++;
+      peak = Math.max(peak, inflight);
+      await new Promise((r) => setTimeout(r, 5));
+      inflight--;
+      return jsonRes({ meta: { videos: [] } });
+    },
+  });
+  await Promise.all(Array.from({ length: 20 }, (_, i) => gated.latest(`tt${i}`, TODAY)));
+  assert.equal(peak, 5);
+});
+
+test('Ended and Canceled make no Cinemeta request; others are refreshed every build; failure keeps the cache', async () => {
+  const e = (status, extra = {}) => ({ first_air_date: 'a', last_air_date: 'a', status, checkedAt: '2026-01-01', ...extra });
+  const map = {
+    1: e('Ended'),
+    2: e('Canceled'),
+    3: e('Returning Series'),
+    4: e('In Production', { cinemeta_last: '2026-10-01', cinemetaCheckedAt: '2026-11-01' }),
+    6: e('Returning Series', { cinemeta_last: '2026-09-09', cinemetaCheckedAt: '2026-11-01' }),
+  };
+  const asked = [];
+  const cinemeta = {
+    latest: async (imdb) => {
+      asked.push(imdb);
+      if (imdb === 'tt6') throw new Error('down');
+      return '2026-11-10';
+    },
+  };
+  const r = await resolveCinemeta([1, 2, 3, 4, 5, 6].map((id) => ({ id, imdb: `tt${id}` })), map, cinemeta, TODAY);
+  assert.deepEqual(asked.sort(), ['tt3', 'tt4', 'tt5', 'tt6']); // 1 and 2 are final: no request
+  assert.deepEqual([r.requests, r.failed], [4, 1]);
+  assert.equal(map[3].cinemeta_last, '2026-11-10');
+  assert.equal(map[4].cinemeta_last, '2026-11-10'); // refreshed
+  assert.equal(map[5].cinemeta_last, '2026-11-10'); // no TMDB entry at all: still stored
+  assert.equal(map[6].cinemeta_last, '2026-09-09'); // failed: cached date kept
+  assert.equal(map[1].cinemeta_last, undefined);
+  // a TMDB refresh keeps the Cinemeta fields
+  const f = mockFetch(() => ({ first_air_date: '2025-01-01', last_air_date: '2026-10-19', status: 'Returning Series' }));
+  await resolveTvDates([{ id: 6 }], map, createClient({ token: 't', fetchImpl: f }), TODAY);
+  assert.equal(map[6].cinemeta_last, '2026-09-09');
+  assert.equal(map[6].last_air_date, '2026-10-19');
 });
 
 test('tc-recent window: 89 days in, 90 in, 91 out, future out', () => {
@@ -112,7 +200,7 @@ test('build: warm cache re-requests only non-final series', async () => {
   await run(p, f1);
   assert.equal(tvCalls(f1).length, 692);
   const cache = JSON.parse(await readFile(p.tvDatesPath, 'utf8'));
-  assert.deepEqual(Object.keys(cache[1001]).sort(), ['checkedAt', 'first_air_date', 'last_air_date', 'status']);
+  assert.deepEqual(Object.keys(cache[1001]).sort(), ['checkedAt', 'cinemetaCheckedAt', 'cinemeta_last', 'first_air_date', 'last_air_date', 'status']);
   const open = Object.values(cache).filter((e) => e.status !== 'Ended' && e.status !== 'Canceled').length;
   const f2 = mockFetch(fakeTmdb());
   await run(p, f2);
@@ -231,4 +319,80 @@ test('tc-recent page files follow the writer rules; other catalogues keep their 
     ['tc-trending', 'Trending this week'], ['tc-new', 'New'], ['tc-recent', 'New episodes'],
   ]);
   assert.equal(manifest.version, '9.9.9');
+});
+
+const cinemetaVideos = (map) => (id) => map[id] ?? [];
+const cinemetaIds = (f) =>
+  f.calls.filter((c) => new URL(c.url).hostname === 'v3-cinemeta.strem.io').map((c) => Number(/tt(\d+)\.json/.exec(c.url)[1]) - 1000000);
+const openDetail = (last) => (id) => ({ id, first_air_date: '2025-02-10', last_air_date: last, status: 'Returning Series' });
+
+test('build: a Cinemeta date newer than TMDB moves the title to the top of tc-recent', async () => {
+  const p = await setup();
+  // id 2001: TMDB stops at 2026-10-19; Cinemeta has an episode on 2026-11-17, plus a special and a
+  // future episode that must not count. id 2002: TMDB 2026-07-01 (outside the window), Cinemeta only a special.
+  const f = mockFetch(fakeTmdb({
+    tvDetail: (id) => ({ id, first_air_date: '2025-02-10', last_air_date: id === 2001 ? '2026-10-19' : '2026-07-01', status: 'Returning Series' }),
+    cinemeta: cinemetaVideos({
+      2001: [vid(1, '2025-03-01T06:00:00Z'), vid(2, '2026-11-17T06:00:00Z'), vid(0, '2026-11-18T06:00:00Z'), vid(2, '2026-11-30T06:00:00Z')],
+      2002: [vid(0, '2026-11-16T06:00:00Z')],
+    }),
+  }));
+  await run(p, f);
+  const recent = await allOf(p, 'series', 'tc-recent');
+  assert.equal(recent[0].id, 'tt1002001');
+  assert.ok(!recent.some((m) => m.id === 'tt1002002')); // special ignored, TMDB date outside 90 days
+  const cache = JSON.parse(await readFile(p.tvDatesPath, 'utf8'));
+  assert.equal(cache[2001].cinemeta_last, '2026-11-17');
+  assert.equal(cache[2001].last_air_date, '2026-10-19'); // the TMDB date is kept as is
+  assert.equal(cache[2002].cinemeta_last, null);
+  const status = await read(p, 'status.json');
+  assert.equal(status.seriesNew.cinemetaBeatTmdb, 1);
+});
+
+test('build: Ended series are never sent to Cinemeta; open series are asked every build', async () => {
+  const p = await setup();
+  const f1 = mockFetch(fakeTmdb());
+  await run(p, f1);
+  const cache = JSON.parse(await readFile(p.tvDatesPath, 'utf8'));
+  const asked = cinemetaIds(f1);
+  assert.equal(asked.length, 260);
+  assert.ok(asked.every((id) => cache[id].status !== 'Ended' && cache[id].status !== 'Canceled'));
+  assert.ok(Object.values(cache).some((e) => e.status === 'Ended'));
+  const f2 = mockFetch(fakeTmdb());
+  await run(p, f2); // warm: Ended entries still make no request, open ones are asked again
+  assert.deepEqual(cinemetaIds(f2).sort(), asked.sort());
+});
+
+test('build: a Cinemeta failure falls back to TMDB dates, drops nothing, and fails nothing', async () => {
+  const good = await setup();
+  await run(good, mockFetch(fakeTmdb()));
+  const bad = await setup();
+  await run(bad, mockFetch(fakeTmdb({ failCinemeta: 500, cinemeta: cinemetaVideos({ 2001: [vid(2, '2026-11-17T06:00:00Z')] }) })));
+  assert.deepEqual(await allOf(bad, 'series', 'tc-recent'), await allOf(good, 'series', 'tc-recent'));
+  const status = await read(bad, 'status.json');
+  assert.equal(status.seriesNew.cinemetaFailed, 260);
+  assert.equal(status.seriesNew.cinemetaBeatTmdb, 0);
+  // a cached Cinemeta date still counts while Cinemeta is down, and survives the TMDB refresh
+  const warm = await setup();
+  await mkdir(join(warm.root, 'data'), { recursive: true });
+  await writeFile(
+    warm.tvDatesPath,
+    JSON.stringify({ 2001: { first_air_date: '2025-02-10', last_air_date: '2026-10-19', status: 'Returning Series', checkedAt: '2026-11-01', cinemeta_last: '2026-11-17', cinemetaCheckedAt: '2026-11-01' } }),
+  );
+  await run(warm, mockFetch(fakeTmdb({ failCinemeta: 500, tvDetail: openDetail('2026-10-19') })));
+  assert.equal((await allOf(warm, 'series', 'tc-recent'))[0].id, 'tt1002001');
+  assert.equal(JSON.parse(await readFile(warm.tvDatesPath, 'utf8'))[2001].cinemeta_last, '2026-11-17');
+});
+
+test('tc-new, tc-trending and movie files are the same whatever Cinemeta says', async () => {
+  const a = await setup();
+  const b = await setup();
+  await run(a, mockFetch(fakeTmdb({ failCinemeta: 500 })));
+  await run(b, mockFetch(fakeTmdb({ cinemeta: () => [vid(1, '2026-11-17T06:00:00Z')] })));
+  const files = async (d) =>
+    (await readdir(d, { recursive: true })).filter((f) => /^catalog[\\/](movie|series[\\/]tc-(trending|new))/.test(f) && f.endsWith('.json')).sort();
+  const fa = await files(a.distDir);
+  assert.deepEqual(fa, await files(b.distDir));
+  assert.ok(fa.length > 50);
+  for (const rel of fa) assert.equal(await readFile(join(a.distDir, rel), 'utf8'), await readFile(join(b.distDir, rel), 'utf8'), rel);
 });

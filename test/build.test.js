@@ -86,7 +86,9 @@ test('request budget of a cold run (empty idmap), mocked', async () => {
   const p = await setup();
   const f = mockFetch(fakeTmdb());
   await run(p, f);
-  const urls = f.calls.map((c) => new URL(c.url).pathname);
+  const tmdbCalls = f.calls.filter((c) => new URL(c.url).hostname === 'api.themoviedb.org');
+  const cinemetaCalls = f.calls.filter((c) => new URL(c.url).hostname === 'v3-cinemeta.strem.io');
+  const urls = tmdbCalls.map((c) => new URL(c.url).pathname);
   const count = (re) => urls.filter((u) => re.test(u)).length;
   const keyword = count(/search\/keyword/);
   const discover = count(/\/discover\//);
@@ -96,8 +98,10 @@ test('request budget of a cold run (empty idmap), mocked', async () => {
   assert.deepEqual([keyword, discover, trending], [1, 86, 40]); // 127 fixed (80 + 6 recent-pass pages)
   assert.equal(ext, 2 * 601 + 120); // 600 pass titles + 1 genre-rule trending title, per kind, + 120 recent-pass titles
   assert.equal(tv, 692); // one /tv/{id} per series in the union of New, P and recent pools with an IMDb id (288 + 288 + 116)
-  assert.equal(f.calls.length, 2141);
-  console.log(`# cold run: ${f.calls.length} requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids + ${tv} tv`);
+  assert.equal(tmdbCalls.length, 2141);
+  // Cinemeta: one per series in the pool that is not Ended: 144 odd New ids + 116 recent-pass ids
+  assert.equal(cinemetaCalls.length, 260);
+  console.log(`# cold run: ${tmdbCalls.length} TMDB + ${cinemetaCalls.length} Cinemeta requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids + ${tv} tv`);
 });
 test('dist/ has no tc-popular file or mention, and status.json has no Popular key', async () => {
   const p = await setup();
@@ -182,7 +186,11 @@ test('secret scan: token appears nowhere in dist/, logs, idmap or error text', a
   assert.ok(!logs.join('\n').includes(TOKEN));
   // the token goes only in the header, never in a URL
   assert.ok(f.calls.every((c) => !c.url.includes(TOKEN) && !c.url.includes('api_key')));
-  assert.ok(f.calls.every((c) => c.url.startsWith('https://api.themoviedb.org/')));
+  // TMDB and Cinemeta are the only hosts; the token goes only to TMDB, in a header
+  const host = (c) => new URL(c.url).hostname;
+  assert.ok(f.calls.every((c) => ['api.themoviedb.org', 'v3-cinemeta.strem.io'].includes(host(c))));
+  assert.ok(f.calls.some((c) => host(c) === 'v3-cinemeta.strem.io'));
+  assert.ok(f.calls.filter((c) => host(c) === 'v3-cinemeta.strem.io').every((c) => !JSON.stringify(c.opts ?? {}).includes(TOKEN) && !c.opts?.headers?.Authorization));
 
   const p2 = await setup();
   try {
@@ -198,11 +206,11 @@ test('redactor replaces the token in any string', () => {
   assert.equal(redactor('')('plain'), 'plain');
 });
 
-test('manifest version comes from package.json (0.1.3: series New by last air date)', async () => {
+test('manifest version comes from package.json (0.1.4: tc-recent uses Cinemeta dates)', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()), { version: undefined });
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '0.1.3');
+  assert.equal(pkg.version, '0.1.4');
 });
