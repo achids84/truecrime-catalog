@@ -7,62 +7,35 @@ export const PAGE_SIZE = 100;
 export const PAGES = 3; // skip=0 (no suffix), skip=100, skip=200
 export const MIN_ITEMS = 20;
 export const TYPES = ['movie', 'series'];
-// The two built-in catalogues. Kept as the default when no config is given (tests, old callers);
-// the build passes the enabled entries of config/catalogues.json instead.
 export const CATALOGS = [
-  { id: 'tc-trending', name: 'Trending this week', kind: 'trending', types: ['movie', 'series'], enabled: true },
-  { id: 'tc-new', name: 'New', kind: 'new', types: ['movie', 'series'], enabled: true },
+  { id: 'tc-trending', name: 'Trending this week' },
+  { id: 'tc-new', name: 'New' },
 ];
-
-// Catalogues of one type, in config order.
-const ofType = (catalogues, type) => catalogues.filter((c) => c.types.includes(type));
-
-// Trending and New always write 3 pages (skip=0, 100, 200). A discover catalogue writes as many
-// pages as it needs, plus one trailing partial or empty page so the client sees the end.
-export function pageCount(kind, n) {
-  return kind === 'discover' ? Math.floor(n / PAGE_SIZE) + 1 : PAGES;
-}
 export const TMDB_ATTRIBUTION =
   'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
 export class BuildError extends Error {}
 
-// Types that have at least one catalogue, in manifest order.
-const typesOf = (catalogues) => TYPES.filter((t) => ofType(catalogues, t).length > 0);
-
-// One sentence for the landing page, e.g. "Each type has two catalogues: Trending this week and New."
-const NUMBER_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
-export function describeCatalogues(catalogues) {
-  const lists = typesOf(catalogues).map((t) => ofType(catalogues, t).map((c) => c.name));
-  const same = lists.every((l) => JSON.stringify(l) === JSON.stringify(lists[0]));
-  if (!same) return 'The catalogues differ between movies and series; they are listed in Stremio.';
-  const names = lists[0];
-  const n = names.length;
-  const joined = n === 1 ? names[0] : `${names.slice(0, -1).join(', ')} and ${names[n - 1]}`;
-  return `Each type has ${NUMBER_WORDS[n] ?? n} catalogue${n === 1 ? '' : 's'}: ${joined}.`;
-}
-
-// catalogues: the enabled entries of config/catalogues.json (disabled ones are simply not passed).
-export function buildManifest(version, catalogues = CATALOGS) {
+export function buildManifest(version) {
   return {
     id: ADDON_ID,
     version,
     name: 'True Crime Documentaries',
     description: 'True crime documentaries: trending this week and new. Data from TMDB.',
     resources: ['catalog'],
-    types: typesOf(catalogues),
-    catalogs: typesOf(catalogues).flatMap((type) =>
-      ofType(catalogues, type).map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
+    types: [...TYPES],
+    catalogs: TYPES.flatMap((type) =>
+      CATALOGS.map((c) => ({ type, id: c.id, name: c.name, extra: [{ name: 'skip' }] })),
     ),
   };
 }
 
 // The failure rule: every catalogue needs at least MIN_ITEMS items.
 // catalogs: { movie: { 'tc-new': [metas], ... }, series: {...} }
-export function assertMinimums(catalogs, min = MIN_ITEMS, catalogues = CATALOGS) {
+export function assertMinimums(catalogs, min = MIN_ITEMS) {
   const short = [];
   for (const type of TYPES) {
-    for (const c of ofType(catalogues, type)) {
+    for (const c of CATALOGS) {
       const n = catalogs?.[type]?.[c.id]?.length ?? 0;
       if (n < min) short.push(`${type}/${c.id}=${n}`);
     }
@@ -77,15 +50,13 @@ export function assertMinimums(catalogs, min = MIN_ITEMS, catalogues = CATALOGS)
 // newestNew: newest release date in New, per type. contributions: per catalogue, how many
 // of its items each discover pass contributed (P = popularity pass, New; an item in
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
-export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues = CATALOGS }) {
+export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
   const counts = {};
-  for (const type of TYPES) {
-    for (const c of ofType(catalogues, type)) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
-  }
+  for (const type of TYPES) for (const c of CATALOGS) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
   return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions };
 }
 
-export function renderIndexHtml(catalogues = CATALOGS) {
+export function renderIndexHtml() {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -104,7 +75,7 @@ export function renderIndexHtml(catalogues = CATALOGS) {
 </head>
 <body>
 <h1>True Crime Documentaries</h1>
-<p>A Stremio addon with true crime documentaries, as movies and series. ${describeCatalogues(catalogues)}</p>
+<p>A Stremio addon with true crime documentaries, as movies and series. Each type has two catalogues: Trending this week and New.</p>
 <p><a class="btn" id="install" href="#">Install in Stremio</a></p>
 <p>Or paste this manifest URL into Stremio's addon search box:<br><code id="url"></code></p>
 <script>
@@ -119,16 +90,16 @@ export function renderIndexHtml(catalogues = CATALOGS) {
 }
 
 // Pure: returns Map<relativePath, string> for everything that goes into dist/.
-export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues = CATALOGS }) {
+export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }) {
   const files = new Map();
   const json = (v) => JSON.stringify(v) + '\n';
-  files.set('manifest.json', json(buildManifest(version, catalogues)));
-  files.set('index.html', renderIndexHtml(catalogues));
-  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, catalogues }), null, 2) + '\n');
+  files.set('manifest.json', json(buildManifest(version)));
+  files.set('index.html', renderIndexHtml());
+  files.set('status.json', JSON.stringify(buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions }), null, 2) + '\n');
   for (const type of TYPES) {
-    for (const c of ofType(catalogues, type)) {
+    for (const c of CATALOGS) {
       const all = catalogs[type][c.id];
-      for (let p = 0; p < pageCount(c.kind, all.length); p++) {
+      for (let p = 0; p < PAGES; p++) {
         const metas = all.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE);
         const path =
           p === 0
