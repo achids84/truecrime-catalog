@@ -1,4 +1,4 @@
-// Build entry point: node --env-file-if-exists=.env.local src/build.js
+// Build entry point: node --env-file=.env.local src/build.js
 // Reads TMDB_TOKEN from the environment. Exits non-zero and writes nothing to dist/ on failure.
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
