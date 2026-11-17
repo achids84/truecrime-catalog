@@ -9,6 +9,7 @@
     "test": "node --test",
     "build": "node --env-file=.env.local src/build.js",
     "build:ci": "node src/build.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "check-exclude": "node scripts/check-exclude.js"
   }
 }
