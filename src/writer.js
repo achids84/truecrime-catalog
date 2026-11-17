@@ -55,7 +55,7 @@ export function assertMinimums(catalogs, min = MIN_ITEMS) {
 // several passes counts in each; genreRule = in no pass, admitted to Trending by genre_ids).
 export function buildStatus({ builtAt, catalogs, skippedNoImdb, padded, newestNew, contributions, seriesNew }) {
   const counts = {};
-  for (const type of TYPES) for (const c of catalogsFor(type)) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
+  for (const type of TYPES) for (const c of catalogsFor(type)) if (catalogs[type][c.id]) counts[`${type}/${c.id}`] = catalogs[type][c.id].length;
   return { builtAt, counts, skippedNoImdb, padded, newestNew, contributions, ...(seriesNew ? { seriesNew } : {}) };
 }
 
@@ -102,6 +102,7 @@ export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, 
   for (const type of TYPES) {
     for (const c of catalogsFor(type)) {
       const all = catalogs[type][c.id];
+      if (!all) continue; // tc-recent is built for series by the build; pure callers may omit it
       // Base file is always written (the first PAGE_SIZE titles). Then one page per skip that
       // is a multiple of SKIP_STEP and below the list size, so apps whose rail holds a count
       // that is not a multiple of PAGE_SIZE (GameDay: 30, 130, 230) still hit a file.
