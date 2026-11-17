@@ -54,32 +54,67 @@ test('catalogue ids, names, types and extra', () => {
   for (const c of m.catalogs) assert.deepEqual(c.extra, [{ name: 'skip' }]); // no search, no genre
 });
 
-test('paging file names and sizes are 100, 100, 100', () => {
+const ids = (files, path) => JSON.parse(files.get(path)).metas.map((m) => m.id);
+const skips = (files, type = 'movie', id = 'tc-new') =>
+  [...files.keys()]
+    .filter((k) => k.startsWith(`catalog/${type}/${id}/skip=`))
+    .map((k) => Number(/skip=(\d+)\.json$/.exec(k)[1]))
+    .sort((x, y) => x - y);
+
+test('base, skip=100 and skip=200 keep their old content for a 300 list', () => {
   const files = plan(300);
   for (const type of ['movie', 'series']) {
     for (const id of ['tc-trending', 'tc-new']) {
-      const sizes = [
-        `catalog/${type}/${id}.json`,
-        `catalog/${type}/${id}/skip=100.json`,
-        `catalog/${type}/${id}/skip=200.json`,
-      ].map((p) => {
-        assert.ok(files.has(p), `missing ${p}`);
-        return JSON.parse(files.get(p)).metas.length;
-      });
-      assert.deepEqual(sizes, [100, 100, 100]);
+      const all = cats(300)[type][id];
+      const json = (m) => JSON.stringify({ metas: m }) + '\n';
+      assert.equal(files.get(`catalog/${type}/${id}.json`), json(all.slice(0, 100)));
+      assert.equal(files.get(`catalog/${type}/${id}/skip=100.json`), json(all.slice(100, 200)));
+      assert.equal(files.get(`catalog/${type}/${id}/skip=200.json`), json(all.slice(200, 300)));
+      assert.ok(!files.has(`catalog/${type}/${id}/skip=300.json`));
     }
   }
-  assert.ok(![...files.keys()].some((k) => k.includes('skip=300')));
 });
 
-test('pages are consecutive slices and short lists leave empty tail pages', () => {
-  const files = plan(150);
-  const p0 = JSON.parse(files.get('catalog/movie/tc-new.json')).metas;
-  const p1 = JSON.parse(files.get('catalog/movie/tc-new/skip=100.json')).metas;
-  const p2 = JSON.parse(files.get('catalog/movie/tc-new/skip=200.json')).metas;
-  assert.deepEqual([p0.length, p1.length, p2.length], [100, 50, 0]);
-  assert.equal(p0[99].id, 'tt99');
-  assert.equal(p1[0].id, 'tt100');
+test('pages exist at every multiple of 10 and hold the right slices', () => {
+  const files = plan(245);
+  const p = (n) => ids(files, `catalog/movie/tc-new/skip=${n}.json`);
+  assert.equal(p(30).length, 100);
+  assert.equal(p(30)[0], 'tt30');
+  assert.equal(p(30)[99], 'tt129');
+  assert.equal(p(130)[0], 'tt130');
+  assert.equal(p(130).length, 100);
+  assert.equal(p(230)[0], 'tt230');
+  assert.equal(p(230).length, 15); // last partial page
+  assert.equal(p(240).length, 5);
+  assert.deepEqual(skips(files), Array.from({ length: 24 }, (_, i) => (i + 1) * 10));
+});
+
+test('no page at or beyond the list size', () => {
+  const f226 = plan(226);
+  assert.ok(f226.has('catalog/movie/tc-new/skip=220.json'));
+  assert.ok(!f226.has('catalog/movie/tc-new/skip=230.json'));
+  assert.equal(ids(f226, 'catalog/movie/tc-new/skip=220.json').length, 6);
+  assert.ok(plan(245).has('catalog/series/tc-trending/skip=240.json'));
+  const f200 = plan(200);
+  assert.ok(!f200.has('catalog/movie/tc-new/skip=200.json'));
+  assert.ok(f200.has('catalog/movie/tc-new/skip=190.json'));
+});
+
+test('a list of 20 has files for skip 0 and skip=10 only', () => {
+  const files = plan(20);
+  assert.ok(files.has('catalog/movie/tc-new.json'));
+  assert.deepEqual(skips(files), [10]);
+  assert.equal(ids(files, 'catalog/movie/tc-new/skip=10.json').length, 10);
+});
+
+test('no page file for a skip that is not a multiple of 10', () => {
+  for (const f of [plan(20), plan(226), plan(245)]) {
+    for (const k of f.keys()) {
+      const m = /skip=(\d+)\.json$/.exec(k);
+      if (m) assert.equal(Number(m[1]) % 10, 0, k);
+    }
+    assert.ok(!f.has('catalog/movie/tc-new/skip=35.json'));
+  }
 });
 
 test('status.json has build time, counts, skipped and padded', () => {
