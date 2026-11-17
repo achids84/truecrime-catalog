@@ -43,11 +43,8 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
   // new status fields: newest release date in New, and per catalogue pass contributions
   assert.deepEqual(status.newestNew, { movie: '2026-11-17', series: '2026-11-17' });
   for (const type of ['movie', 'series']) {
-    // series New also has the recent-airing pass (ADDON-5b): 300 kept of 288 + 116 pooled titles
-    assert.deepEqual(
-      status.contributions[`${type}/tc-new`],
-      type === 'movie' ? { P: 0, New: 288, genreRule: 0 } : { P: 0, New: 212, Recent: 88, genreRule: 0 },
-    );
+    // tc-new is the same for both types: the recent pass never feeds it (ADDON-5c)
+    assert.deepEqual(status.contributions[`${type}/tc-new`], { P: 0, New: 288, genreRule: 0 });
     assert.equal(status.contributions[`${type}/tc-popular`], undefined);
     // 38 P hits, the New-pass title 1001, and id 5001 admitted by the genre rule alone
     assert.deepEqual(status.contributions[`${type}/tc-trending`], { P: 38, New: 1, genreRule: 1 });
@@ -98,8 +95,8 @@ test('request budget of a cold run (empty idmap), mocked', async () => {
   const tv = count(/^\/3\/tv\/\d+$/);
   assert.deepEqual([keyword, discover, trending], [1, 86, 40]); // 127 fixed (80 + 6 recent-pass pages)
   assert.equal(ext, 2 * 601 + 120); // 600 pass titles + 1 genre-rule trending title, per kind, + 120 recent-pass titles
-  assert.equal(tv, 404); // one /tv/{id} per series in the New pool that has an IMDb id (288 + 116)
-  assert.equal(f.calls.length, 1853);
+  assert.equal(tv, 692); // one /tv/{id} per series in the union of New, P and recent pools with an IMDb id (288 + 288 + 116)
+  assert.equal(f.calls.length, 2141);
   console.log(`# cold run: ${f.calls.length} requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids + ${tv} tv`);
 });
 test('dist/ has no tc-popular file or mention, and status.json has no Popular key', async () => {
@@ -121,9 +118,9 @@ test('dist/ has no tc-popular file or mention, and status.json has no Popular ke
     assert.ok(!(await readFile(file, 'utf8')).includes('tc-popular'), file);
   }
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
-  assert.equal(manifest.catalogs.length, 4);
+  assert.equal(manifest.catalogs.length, 5);
   const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
-  assert.deepEqual(Object.keys(status.counts), ['movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new']);
+  assert.deepEqual(Object.keys(status.counts), ['movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new', 'series/tc-recent']);
   assert.deepEqual(Object.keys(status.contributions).sort(), Object.keys(status.counts).sort());
   assert.ok(!JSON.stringify(status).toLowerCase().includes('popular'));
 });
