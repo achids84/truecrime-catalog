@@ -189,11 +189,11 @@ test('redactor replaces the token in any string', () => {
   assert.equal(redactor('')('plain'), 'plain');
 });
 
-test('manifest version comes from package.json (bumped to 0.1.1 for the catalogue change)', async () => {
+test('manifest version comes from package.json (bumped to 0.1.2 for the skip pages)', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()), { version: undefined });
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '0.1.1');
+  assert.equal(pkg.version, '0.1.2');
 });
