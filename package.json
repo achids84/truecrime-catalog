@@ -1,6 +1,6 @@
 {
   "name": "truecrime-catalog",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Static Stremio addon: true crime documentaries, built from TMDB.",
   "private": true,
   "type": "module",
