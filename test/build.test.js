@@ -50,10 +50,12 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
   }
 
   const read = async (rel) => JSON.parse(await readFile(join(p.distDir, rel), 'utf8')).metas;
+  // a missing page file is the end of the list (404), so it reads as empty
+  const readOrEmpty = (rel) => read(rel).catch((e) => (e.code === 'ENOENT' ? [] : Promise.reject(e)));
   const pages = async (type, id) => [
     ...(await read(`catalog/${type}/${id}.json`)),
-    ...(await read(`catalog/${type}/${id}/skip=100.json`)),
-    ...(await read(`catalog/${type}/${id}/skip=200.json`)),
+    ...(await readOrEmpty(`catalog/${type}/${id}/skip=100.json`)),
+    ...(await readOrEmpty(`catalog/${type}/${id}/skip=200.json`)),
   ];
   const tmdbId = (m) => Number(m.id.slice(2)) - 1000000;
   assert.equal((await read('catalog/movie/tc-new.json')).length, 100);
@@ -98,7 +100,16 @@ test('dist/ has no tc-popular file or mention, and status.json has no Popular ke
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()));
   const files = await walk(p.distDir);
-  assert.equal(files.length, 2 * 2 * 3 + 3); // 4 catalogues x 3 pages + manifest, index, status
+  // manifest, index, status + per catalogue: base file + a page per multiple of 10 below its size
+  // + the empty skip=100, skip=200 and skip=<size> (when size is a multiple of 10)
+  const counts = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8')).counts;
+  const pageFiles = Object.values(counts).reduce((t, n) => {
+    const skips = new Set([100, 200]);
+    for (let k = 10; k < n; k += 10) skips.add(k);
+    if (n % 10 === 0) skips.add(n);
+    return t + 1 + skips.size;
+  }, 0);
+  assert.equal(files.length, 3 + pageFiles);
   for (const file of files) {
     assert.ok(!file.toLowerCase().includes('popular'), file);
     assert.ok(!(await readFile(file, 'utf8')).includes('tc-popular'), file);
@@ -184,11 +195,11 @@ test('redactor replaces the token in any string', () => {
   assert.equal(redactor('')('plain'), 'plain');
 });
 
-test('manifest version comes from package.json (bumped to 0.1.1 for the catalogue change)', async () => {
+test('manifest version comes from package.json (bumped to 0.1.2 for the skip pages)', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()), { version: undefined });
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '0.1.1');
+  assert.equal(pkg.version, '0.1.2');
 });

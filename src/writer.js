@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 
 export const ADDON_ID = 'org.allistair.truecrime';
 export const PAGE_SIZE = 100;
-export const PAGES = 3; // skip=0 (no suffix), skip=100, skip=200
+export const SKIP_STEP = 10; // a page file exists for every skip that is a multiple of this
 export const MIN_ITEMS = 20;
 export const TYPES = ['movie', 'series'];
 export const CATALOGS = [
@@ -99,13 +99,21 @@ export function planOutput({ version, builtAt, catalogs, skippedNoImdb, padded, 
   for (const type of TYPES) {
     for (const c of CATALOGS) {
       const all = catalogs[type][c.id];
-      for (let p = 0; p < PAGES; p++) {
-        const metas = all.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE);
-        const path =
-          p === 0
-            ? `catalog/${type}/${c.id}.json`
-            : `catalog/${type}/${c.id}/skip=${p * PAGE_SIZE}.json`;
-        files.set(path, json({ metas }));
+      // Base file is always written (the first PAGE_SIZE titles). Then one page per skip that
+      // is a multiple of SKIP_STEP and below the list size, so apps whose rail holds a count
+      // that is not a multiple of PAGE_SIZE (GameDay: 30, 130, 230) still hit a file.
+      const page = (skip) => `catalog/${type}/${c.id}/skip=${skip}.json`;
+      files.set(`catalog/${type}/${c.id}.json`, json({ metas: all.slice(0, PAGE_SIZE) }));
+      for (let skip = SKIP_STEP; skip < all.length; skip += SKIP_STEP) {
+        files.set(page(skip), json({ metas: all.slice(skip, skip + PAGE_SIZE) }));
+      }
+      // Empty pages, so no client gets a 404 where it used to get a file or where its paging
+      // ends: skip=100 and skip=200 always exist (as before), and skip=<list size> exists
+      // when the size is a multiple of SKIP_STEP (GameDay asks exactly that after its last card).
+      for (const skip of [100, 200, all.length]) {
+        if (skip > 0 && skip % SKIP_STEP === 0 && !files.has(page(skip))) {
+          files.set(page(skip), json({ metas: [] }));
+        }
       }
     }
   }

@@ -9,6 +9,7 @@ Static Stremio addon (true crime documentaries). A Node build script reads TMDB 
 - A failed build must exit non-zero and write nothing to `dist/`.
 - `data/idmap.json` is committed; everything else generated is not.
 - Catalogues: only `tc-trending` and `tc-new` per type (Popular was removed in 0.1.1; do not reintroduce `tc-popular`). Discover passes: P (popularity) and New (release date).
+- Paging: besides the base file, write `skip=N.json` for every N that is a multiple of 10 and below the list size (GameDay keeps 30 cards per rail: skip 30, 130, 230). Version 0.1.2.
 - Commit per step; add files by name, never `git add -A`.
 
 ## Layout

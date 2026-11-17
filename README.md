@@ -2,7 +2,7 @@
 
 A static Stremio addon. A Node build script reads TMDB and writes plain JSON files to `dist/`. GitHub Pages hosts them and GitHub Actions rebuilds every 6 hours. No server, no runtime dependencies.
 
-Types: `movie` and `series`. Two catalogues per type: **Trending this week** (`tc-trending`) and **New** (`tc-new`). The Popular catalogue was removed in version 0.1.1. Up to 300 items each, in pages of 100 (`skip=100`, `skip=200`). No search, no genre filter.
+Types: `movie` and `series`. Two catalogues per type: **Trending this week** (`tc-trending`) and **New** (`tc-new`). The Popular catalogue was removed in version 0.1.1. Every item the build finds is served, in pages of up to 100 (see Paging below). No search, no genre filter.
 
 Status: not yet run against the real TMDB API. Not yet tested on a device.
 
@@ -39,3 +39,7 @@ If TMDB fails or any catalogue would have fewer than 20 items, the build exits n
 Deploy steps: [docs/DEPLOY.md](docs/DEPLOY.md). Job notes: [docs/jobs/ADDON-1.md](docs/jobs/ADDON-1.md).
 
 This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+## Paging
+
+Each catalogue has a base file (the first 100 titles) and one page file per `skip` that is a multiple of 10 and below the list size, for example `catalog/movie/tc-new/skip=30.json`. Each page holds up to 100 titles from that offset, in list order. Stremio apps ask for `skip=100`, `skip=200`. The GameDay app keeps 30 cards per rail and asks with skip equal to the cards it holds: 30, 130, 230 and so on. That is why skip steps are multiples of 10. Three kinds of empty page (`{"metas":[]}`) exist so clients do not hit a 404: `skip=100` and `skip=200` always exist, as in earlier versions, and `skip=<list size>` exists when the list size is a multiple of 10 (a list of 20 has an empty `skip=20.json`, which GameDay asks for right after its last card). Any other skip at or beyond the list size, or not a multiple of 10, has no file and returns 404, which the app treats as the end of the list. If GameDay ever changes its card limit to a number that is not a multiple of 10, paging breaks again.
