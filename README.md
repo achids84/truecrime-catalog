@@ -8,7 +8,7 @@ Status: not yet run against the real TMDB API. Not yet tested on a device.
 
 ## What counts as true crime
 
-Two discover queries define it: Documentary AND Crime (genres 99,80), and Documentary with the keyword "true crime" (id 33722). Each query is run in two passes of up to 10 pages: by popularity (used for Trending padding and membership) and by release date newest first up to today (the **New** catalogue). So New can hold recent titles that nobody has voted on or watched much. Trending keeps a title from TMDB's weekly trending list if its genres include both 99 and 80, or it appears in either pass. Titles need a poster and an IMDb id. At the start of each build the keyword id is checked against `/search/keyword`; if 33722 is not "true crime" the build stops.
+Two discover queries define it: Documentary AND Crime (genres 99,80), and Documentary with the keyword "true crime" (id 33722). Each query is run in two passes of up to 10 pages: by popularity (used for Trending padding and membership) and by release date newest first up to today (the **New** catalogue). So New can hold recent titles that nobody has voted on or watched much. For series there is a third pass (since 0.1.3): shows with an episode aired in the last 120 days (`air_date.gte`), by popularity, up to 3 pages per query, which only widens the New pool (it never changes Trending). Series in New are sorted by last air date (first air date when TMDB has none), so a show with a new season airing now rises. Movies still sort by release date. Cards still show the first-air year. Trending keeps a title from TMDB's weekly trending list if its genres include both 99 and 80, or it appears in either pass. Titles need a poster and an IMDb id. At the start of each build the keyword id is checked against `/search/keyword`; if 33722 is not "true crime" the build stops.
 
 ## Commands
 
@@ -33,6 +33,8 @@ Needs Node 20.6 or newer. `npm run build` uses `node --env-file=.env.local` and 
 If TMDB fails or any catalogue would have fewer than 20 items, the build exits non-zero and does not touch `dist/`, so the last good deployment stays live.
 
 ## Files
+
+`data/tvdates.json` is committed too: per series id, `first_air_date`, `last_air_date`, `status`, `checkedAt` from `/tv/{id}`, used for the series New sort. Ended and Canceled entries are cached for good; every other status is looked up again on each build. A failed lookup never fails the build: the cached entry is used, else the first air date. The Action commits both files.
 
 `data/idmap.json` is committed: TMDB id to IMDb id cache (`"movie:123": "tt..."`, or `null`). Null entries are checked again after 30 days; the dates live under the reserved key `_nullChecked`.
 
