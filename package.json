@@ -6,7 +6,7 @@
   "type": "module",
   "engines": { "node": ">=20.6" },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test",
     "build": "node --env-file-if-exists=.env.local src/build.js",
     "serve": "node scripts/serve.js"
   }
