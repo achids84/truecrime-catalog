@@ -6,7 +6,8 @@ import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
 import { confirmKeyword, buildPass, buildRecentPass, unionById, fetchTrending, qualifyTrending } from './universe.js';
-import { loadTvDates, saveTvDates, resolveTvDates, sortKey } from './tvdates.js';
+import { loadTvDates, saveTvDates, resolveTvDates, resolveCinemeta, sortKey } from './tvdates.js';
+import { createCinemeta } from './cinemeta.js';
 import { buildTrending, buildNew, buildRecent, contributions } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
@@ -16,6 +17,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export async function runBuild({
   token,
   fetchImpl = globalThis.fetch,
+  cinemetaFetch = fetchImpl,
   sleep,
   now = Date.now(),
   distDir = join(ROOT, 'dist'),
@@ -67,7 +69,10 @@ export async function runBuild({
   log(`resolved ${fetched} new IMDb ids`);
 
   const tvDates = await loadTvDates(tvDatesPath);
-  const seriesNew = { recentAdded: 0, lookups: 0, lookupsFailed: 0, recentBeforeCap: 0, recentKeyFromFirst: 0 };
+  const seriesNew = {
+    recentAdded: 0, lookups: 0, lookupsFailed: 0, cinemetaRequests: 0, cinemetaFailed: 0, cinemetaBeatTmdb: 0,
+    recentBeforeCap: 0, recentKeyFromFirst: 0,
+  };
   const catalogs = {};
   const skippedNoImdb = {};
   const padded = {};
@@ -94,10 +99,16 @@ export async function runBuild({
       const known = new Set([...P, ...N].map((it) => it.id));
       seriesNew.recentAdded = R.filter((it) => !known.has(it.id)).length;
       const { fetched, failed } = await resolveTvDates(datePool, tvDates, client, now);
+      // Cinemeta: the newest released episode, for series that are not Ended or Canceled.
+      const cin = await resolveCinemeta(datePool, tvDates, createCinemeta({ fetchImpl: cinemetaFetch }), now);
       await saveTvDates(tvDatesPath, tvDates); // cache only; dist/ is still untouched
       seriesNew.lookups = fetched;
       seriesNew.lookupsFailed = failed;
-      recent = buildRecent(datePool.map((it) => ({ ...it, ...sortKey(it, tvDates[it.id]) })), today);
+      seriesNew.cinemetaRequests = cin.requests;
+      seriesNew.cinemetaFailed = cin.failed;
+      const keyed = datePool.map((it) => ({ ...it, ...sortKey(it, tvDates[it.id]) }));
+      seriesNew.cinemetaBeatTmdb = keyed.filter((it) => it.sortSource === 'cinemeta').length;
+      recent = buildRecent(keyed, today);
       seriesNew.recentBeforeCap = recent.total;
       seriesNew.recentKeyFromFirst = recent.items.filter((it) => it.sortSource === 'first').length;
     }
@@ -125,7 +136,8 @@ export async function runBuild({
     if (kind === 'tv') {
       log(
         `series: recent pass added ${seriesNew.recentAdded} titles to the pool, ${seriesNew.lookups} /tv lookups ` +
-          `(${seriesNew.lookupsFailed} failed), tc-recent ${recent.items.length} of ${seriesNew.recentBeforeCap} ` +
+          `(${seriesNew.lookupsFailed} failed), ${seriesNew.cinemetaRequests} Cinemeta requests ` +
+          `(${seriesNew.cinemetaFailed} failed, ${seriesNew.cinemetaBeatTmdb} titles where Cinemeta beat TMDB), tc-recent ${recent.items.length} of ${seriesNew.recentBeforeCap} ` +
           `(${seriesNew.recentKeyFromFirst} keyed by first air date)`,
       );
     }
