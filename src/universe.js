@@ -10,6 +10,8 @@ export const KEYWORD_ID = 33722;
 export const KEYWORD_NAME = 'true crime';
 export const MAX_DISCOVER_PAGES = 10;
 export const MAX_TRENDING_PAGES = 20;
+export const RECENT_DAYS = 120;
+export const MAX_RECENT_PAGES = 3;
 
 export class KeywordMismatchError extends Error {}
 
@@ -44,10 +46,10 @@ export const PASS_SORT = {
   new: (kind) => (kind === 'movie' ? 'primary_release_date.desc' : 'first_air_date.desc'),
 };
 
-async function discoverPages(client, kind, extra) {
+async function discoverPages(client, kind, extra, maxPages = MAX_DISCOVER_PAGES) {
   const params = { include_adult: 'false', language: 'en-US', ...extra };
   const first = await client.get(`/discover/${kind}`, { ...params, page: 1 });
-  const last = Math.min(MAX_DISCOVER_PAGES, first.total_pages ?? 1);
+  const last = Math.min(maxPages, first.total_pages ?? 1);
   const rest = await Promise.all(
     Array.from({ length: Math.max(0, last - 1) }, (_, i) =>
       client.get(`/discover/${kind}`, { ...params, page: i + 2 }),
@@ -79,6 +81,26 @@ export async function buildPass(client, kind, pass, today) {
     discoverPages(client, kind, { ...extra, with_genres: '99', with_keywords: String(KEYWORD_ID) }),
   ]);
   return mergeUniverse(kind, a, b);
+}
+
+// Series only: titles with an episode aired in the last RECENT_DAYS days, by popularity, with the
+// same genre and keyword sets as the other passes. Catches old shows with a new season. It only
+// widens the New pool; it is never part of the Trending union.
+export async function buildRecentPass(client, today) {
+  const gte = new Date(Date.parse(today) - RECENT_DAYS * 86400000).toISOString().slice(0, 10);
+  const extra = { sort_by: 'popularity.desc', 'air_date.gte': gte };
+  const [a, b] = await Promise.all([
+    discoverPages(client, 'tv', { ...extra, with_genres: '99,80' }, MAX_RECENT_PAGES),
+    discoverPages(client, 'tv', { ...extra, with_genres: '99', with_keywords: String(KEYWORD_ID) }, MAX_RECENT_PAGES),
+  ]);
+  return mergeUniverse('tv', a, b);
+}
+
+// Union of normalized item lists by TMDB id, first occurrence wins.
+export function unionById(...lists) {
+  const seen = new Map();
+  for (const it of lists.flat()) if (!seen.has(it.id)) seen.set(it.id, it);
+  return [...seen.values()];
 }
 
 // Raw trending results in trending order (pages 1..20).
