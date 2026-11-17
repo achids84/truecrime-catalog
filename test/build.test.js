@@ -100,9 +100,15 @@ test('dist/ has no tc-popular file or mention, and status.json has no Popular ke
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()));
   const files = await walk(p.distDir);
-  // manifest, index, status + per catalogue: base file + one page per multiple of 10 below its size
+  // manifest, index, status + per catalogue: base file + a page per multiple of 10 below its size
+  // + the empty skip=100, skip=200 and skip=<size> (when size is a multiple of 10)
   const counts = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8')).counts;
-  const pageFiles = Object.values(counts).reduce((t, n) => t + 1 + Math.ceil(n / 10) - 1, 0);
+  const pageFiles = Object.values(counts).reduce((t, n) => {
+    const skips = new Set([100, 200]);
+    for (let k = 10; k < n; k += 10) skips.add(k);
+    if (n % 10 === 0) skips.add(n);
+    return t + 1 + skips.size;
+  }, 0);
   assert.equal(files.length, 3 + pageFiles);
   for (const file of files) {
     assert.ok(!file.toLowerCase().includes('popular'), file);

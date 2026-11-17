@@ -9,7 +9,9 @@ The GameDay app keeps 30 cards per rail, then asks a catalogue for the next page
 ## Change
 
 - `src/writer.js`: the base file (`catalog/<type>/<id>.json`) is the first 100 titles. Every skip that is a multiple of 10 and below the list size gets `catalog/<type>/<id>/skip=<N>.json` with up to 100 titles from offset N, in list order. `PAGES` is replaced by `SKIP_STEP = 10`; `PAGE_SIZE` stays 100.
-- No page at or beyond the list size, none for a skip that is not a multiple of 10. A 404 is the end of the list for the app. Short lists no longer get an empty `skip=200.json`.
+- No real page at or beyond the list size, none for a skip that is not a multiple of 10. A 404 is the end of the list for the app.
+- Correction (ADDON-4b): empty pages `{"metas":[]}
+` are still written where a client needs one. `skip=100.json` and `skip=200.json` always exist, byte-identical to the old writer's empty files for lists that do not reach them. `skip=<list size>.json` is written empty when the size is a multiple of 10: GameDay asks exactly that skip after its last card, and an empty page ends its paging without a 404. A list of 20 has `skip=10` (10 titles) and an empty `skip=20`. Lists of 226 and 245 get no extra file, since the size is not a multiple of 10.
 - Base, `skip=100.json` and `skip=200.json` are byte-identical to before for lists long enough to have them.
 - Manifest unchanged except `version` 0.1.1 to 0.1.2 (package.json). No new dependency, no workflow change.
 - Lists are no longer capped at 300 titles by the writer.

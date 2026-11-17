@@ -70,7 +70,7 @@ test('base, skip=100 and skip=200 keep their old content for a 300 list', () => 
       assert.equal(files.get(`catalog/${type}/${id}.json`), json(all.slice(0, 100)));
       assert.equal(files.get(`catalog/${type}/${id}/skip=100.json`), json(all.slice(100, 200)));
       assert.equal(files.get(`catalog/${type}/${id}/skip=200.json`), json(all.slice(200, 300)));
-      assert.ok(!files.has(`catalog/${type}/${id}/skip=300.json`));
+      assert.equal(files.get(`catalog/${type}/${id}/skip=300.json`), EMPTY); // end-of-list page
     }
   }
 });
@@ -89,22 +89,43 @@ test('pages exist at every multiple of 10 and hold the right slices', () => {
   assert.deepEqual(skips(files), Array.from({ length: 24 }, (_, i) => (i + 1) * 10));
 });
 
-test('no page at or beyond the list size', () => {
+const EMPTY = '{"metas":[]}\n'; // the old writer's empty page, byte for byte
+
+test('no real page at or beyond the list size; an empty page only where a client needs one', () => {
   const f226 = plan(226);
   assert.ok(f226.has('catalog/movie/tc-new/skip=220.json'));
-  assert.ok(!f226.has('catalog/movie/tc-new/skip=230.json'));
   assert.equal(ids(f226, 'catalog/movie/tc-new/skip=220.json').length, 6);
+  assert.ok(!f226.has('catalog/movie/tc-new/skip=230.json'));
+  assert.ok(!f226.has('catalog/movie/tc-new/skip=226.json'));
+  assert.deepEqual(skips(f226).filter((n) => n >= 230), []);
   assert.ok(plan(245).has('catalog/series/tc-trending/skip=240.json'));
+  assert.ok(!plan(245).has('catalog/series/tc-trending/skip=250.json'));
   const f200 = plan(200);
-  assert.ok(!f200.has('catalog/movie/tc-new/skip=200.json'));
   assert.ok(f200.has('catalog/movie/tc-new/skip=190.json'));
+  assert.equal(f200.get('catalog/movie/tc-new/skip=200.json'), EMPTY); // size 200: end-of-list page
 });
 
-test('a list of 20 has files for skip 0 and skip=10 only', () => {
+test('a list of 20: base, skip=10, empty skip=20, and the legacy empty skip=100 and skip=200', () => {
   const files = plan(20);
   assert.ok(files.has('catalog/movie/tc-new.json'));
-  assert.deepEqual(skips(files), [10]);
+  assert.deepEqual(skips(files), [10, 20, 100, 200]);
   assert.equal(ids(files, 'catalog/movie/tc-new/skip=10.json').length, 10);
+  for (const n of [20, 100, 200]) assert.equal(files.get(`catalog/movie/tc-new/skip=${n}.json`), EMPTY);
+});
+
+test('lists of 226 and 245 get no empty page: sizes are not multiples of 10', () => {
+  for (const n of [226, 245]) {
+    const files = plan(n);
+    for (const k of skips(files)) {
+      assert.notEqual(files.get(`catalog/movie/tc-new/skip=${k}.json`), EMPTY, `skip=${k}`);
+    }
+  }
+});
+
+test('a list of 150 keeps an empty skip=200 as before', () => {
+  const files = plan(150);
+  assert.equal(files.get('catalog/movie/tc-new/skip=200.json'), EMPTY);
+  assert.equal(ids(files, 'catalog/movie/tc-new/skip=100.json').length, 50);
 });
 
 test('no page file for a skip that is not a multiple of 10', () => {
