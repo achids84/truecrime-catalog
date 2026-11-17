@@ -10,7 +10,7 @@ export const KEYWORD_ID = 33722;
 export const KEYWORD_NAME = 'true crime';
 export const MAX_DISCOVER_PAGES = 10;
 export const MAX_TRENDING_PAGES = 20;
-export const RECENT_DAYS = 120;
+export const RECENT_DAYS = 90; // window for tc-recent and for the recent discover pass
 export const MAX_RECENT_PAGES = 3;
 
 // YYYY-MM-DD, n days before `today` (YYYY-MM-DD).
