@@ -33,31 +33,63 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
 
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, '9.9.9');
-
   const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
-  // 300 in U per kind, ids divisible by 25 have no IMDb id -> 12 skipped
-  assert.equal(status.skippedNoImdb.movie, 12);
+  // pools per kind: P 1..300, N 1001..1300, V 2001..2300 (+ genre-rule trending id 5001);
+  // ids divisible by 25 have no IMDb id -> 12 per pass = 36 skipped
+  assert.equal(status.skippedNoImdb.movie, 36);
   assert.equal(status.counts['movie/tc-popular'], 288);
+  assert.equal(status.counts['movie/tc-new'], 288);
   assert.equal(status.padded.movie, 0);
 
   const read = async (rel) => JSON.parse(await readFile(join(p.distDir, rel), 'utf8')).metas;
-  const popular = await read('catalog/movie/tc-popular.json');
-  assert.equal(popular.length, 100);
+  const pages = async (type, id) => [
+    ...(await read(`catalog/${type}/${id}.json`)),
+    ...(await read(`catalog/${type}/${id}/skip=100.json`)),
+    ...(await read(`catalog/${type}/${id}/skip=200.json`)),
+  ];
+  const tmdbId = (m) => Number(m.id.slice(2)) - 1000000;
+  assert.equal((await read('catalog/movie/tc-popular.json')).length, 100);
   assert.equal((await read('catalog/movie/tc-popular/skip=200.json')).length, 88);
 
-  // New never lists the future (ids divisible by 7 are dated 2027)
-  const newest = [];
-  for (const rel of ['catalog/movie/tc-new.json', 'catalog/movie/tc-new/skip=100.json', 'catalog/movie/tc-new/skip=200.json'])
-    newest.push(...(await read(rel)));
+  // New comes from the date pass (ids 1001..1300, low popularity), never from P or V,
+  // and the newest title leads
+  const newest = await pages('movie', 'tc-new');
+  assert.ok(newest.every((m) => tmdbId(m) >= 1001 && tmdbId(m) <= 1300));
+  assert.equal(newest[0].id, 'tt1001291');
   assert.ok(newest.every((m) => Number(m.releaseInfo) <= 2026));
 
-  // Trending starts with trending order: ids 300, 299, ... (300 and 275/250/... lack IMDb ids)
-  const trending = await read('catalog/series/tc-trending.json');
+  // Popular comes from the vote_count pass (ids 2001..2300), highest vote_count first
+  const popularAll = await pages('movie', 'tc-popular');
+  assert.ok(popularAll.every((m) => tmdbId(m) >= 2001 && tmdbId(m) <= 2300));
+  assert.equal(popularAll[0].id, 'tt1002001');
+
+  // Trending: P hits in trending order (300 has no IMDb id), then the union-only title
+  // (1001, found by the New pass) and the genre-rule title (5001). Strangers are excluded.
+  const trending = await pages('series', 'tc-trending');
   assert.equal(trending[0].id, 'tt1000299');
   assert.equal(trending[0].type, 'series');
+  assert.equal(trending.length, 40);
+  const ids = trending.map(tmdbId);
+  assert.ok(ids.includes(1001) && ids.includes(5001));
+  assert.ok(!ids.some((i) => i >= 90000));
   assert.ok(logs.length > 0);
 });
 
+test('request budget of a cold run (empty idmap), mocked', async () => {
+  const p = await setup();
+  const f = mockFetch(fakeTmdb());
+  await run(p, f);
+  const urls = f.calls.map((c) => new URL(c.url).pathname);
+  const count = (re) => urls.filter((u) => re.test(u)).length;
+  const keyword = count(/search\/keyword/);
+  const discover = count(/\/discover\//);
+  const trending = count(/\/trending\//);
+  const ext = count(/external_ids/);
+  assert.deepEqual([keyword, discover, trending], [1, 120, 40]); // 161 fixed
+  assert.equal(ext, 2 * 901); // 900 pass titles + 1 genre-rule trending title, per kind
+  assert.equal(f.calls.length, 1963);
+  console.log(`# cold run: ${f.calls.length} requests = ${keyword} keyword + ${discover} discover + ${trending} trending + ${ext} external_ids`);
+});
 test('idmap is written and reused: second run resolves nothing new', async () => {
   const p = await setup();
   const f1 = mockFetch(fakeTmdb());
@@ -74,7 +106,8 @@ test('padding is recorded in status.json when trending overlap is small', async 
   const p = await setup();
   await run(p, mockFetch(fakeTmdb({ trendingHits: 5 })));
   const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
-  assert.equal(status.padded.movie, 16); // 5 trending hits, id 300 has no IMDb id -> 4 kept, 16 padded
+  // 5 P hits (id 300 has no IMDb id -> 4) plus the union title and the genre-rule title = 6 qualified
+  assert.equal(status.padded.movie, 14);
   assert.equal(status.counts['movie/tc-trending'], 20);
 });
 

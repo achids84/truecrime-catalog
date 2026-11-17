@@ -16,14 +16,14 @@ export function toMeta(item) {
   return meta;
 }
 
-// Map items to metas, dropping repeated IMDb ids (two TMDB ids can share one).
-export function toMetas(items) {
+// Drop repeated IMDb ids (two TMDB ids can share one), keeping the first.
+export function dedupeByImdb(items) {
   const seen = new Set();
-  const out = [];
-  for (const it of items) {
-    if (!it.imdb || seen.has(it.imdb)) continue;
+  return items.filter((it) => {
+    if (!it.imdb || seen.has(it.imdb)) return false;
     seen.add(it.imdb);
-    out.push(toMeta(it));
-  }
-  return out;
+    return true;
+  });
 }
+
+export const toMetas = (items) => dedupeByImdb(items).map(toMeta);

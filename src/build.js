@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createClient } from './tmdb.js';
 import { loadIdMap, saveIdMap, resolveImdbIds, lookup } from './idmap.js';
-import { confirmKeyword, buildUniverse, fetchTrendingIds } from './universe.js';
+import { confirmKeyword, buildPass, fetchTrending, qualifyTrending } from './universe.js';
 import { buildTrending, buildNew, buildPopular } from './lists.js';
 import { toMetas, STREMIO_TYPE } from './meta.js';
 import { assertMinimums, planOutput, writeDist, BuildError } from './writer.js';
@@ -30,21 +30,31 @@ export async function runBuild({
   await confirmKeyword(client);
 
   const kinds = ['movie', 'tv'];
-  const universe = {};
-  const trendingIds = {};
+  const passes = {}; // passes[kind] = { P, N, V, trending }
   await Promise.all(
     kinds.map(async (kind) => {
-      [universe[kind], trendingIds[kind]] = await Promise.all([
-        buildUniverse(client, kind),
-        fetchTrendingIds(client, kind),
+      const [P, N, V, trendingRaw] = await Promise.all([
+        buildPass(client, kind, 'popularity', today),
+        buildPass(client, kind, 'new', today),
+        buildPass(client, kind, 'popular', today),
+        fetchTrending(client, kind),
       ]);
-      log(`${kind}: universe ${universe[kind].length}`);
+      const unionIds = new Set([...P, ...N, ...V].map((it) => it.id));
+      const trending = qualifyTrending(kind, trendingRaw, unionIds);
+      passes[kind] = { P, N, V, trending };
+      log(`${kind}: P ${P.length}, New ${N.length}, Popular ${V.length}, trending qualified ${trending.length}`);
     }),
   );
 
+  // IMDb ids are resolved once for every distinct title in any pass or in Trending.
+  const pool = {}; // pool[kind] = Map(tmdb id -> item)
+  for (const kind of kinds) {
+    const { P, N, V, trending } = passes[kind];
+    pool[kind] = new Map([...P, ...N, ...V, ...trending].map((it) => [it.id, it]));
+  }
   const idmap = await loadIdMap(idmapPath);
   const { fetched } = await resolveImdbIds(
-    kinds.flatMap((k) => universe[k]),
+    kinds.flatMap((k) => [...pool[k].values()]),
     idmap,
     client,
     now,
@@ -57,22 +67,22 @@ export async function runBuild({
   const padded = {};
   for (const kind of kinds) {
     const type = STREMIO_TYPE[kind];
-    const withImdb = [];
-    skippedNoImdb[type] = 0;
-    for (const it of universe[kind]) {
-      const imdb = lookup(idmap, kind, it.id);
-      if (imdb) withImdb.push({ ...it, imdb });
-      else skippedNoImdb[type]++;
-    }
-    const trending = buildTrending(withImdb, trendingIds[kind]);
-    padded[type] = trending.padded;
+    const attach = (list) =>
+      list.flatMap((it) => {
+        const imdb = lookup(idmap, kind, it.id);
+        return imdb ? [{ ...it, imdb }] : [];
+      });
+    const { P, N, V, trending } = passes[kind];
+    skippedNoImdb[type] = [...pool[kind].values()].filter((it) => !lookup(idmap, kind, it.id)).length;
+    const trend = buildTrending(attach(trending), attach(P));
+    padded[type] = trend.padded;
     catalogs[type] = {
-      'tc-trending': toMetas(trending.items),
-      'tc-new': toMetas(buildNew(withImdb, today)),
-      'tc-popular': toMetas(buildPopular(withImdb)),
+      'tc-trending': toMetas(trend.items),
+      'tc-new': toMetas(buildNew(attach(N), today)),
+      'tc-popular': toMetas(buildPopular(attach(V))),
     };
     log(
-      `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trending.padded}), ` +
+      `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
         `new ${catalogs[type]['tc-new'].length}, popular ${catalogs[type]['tc-popular'].length}, ` +
         `skipped no IMDb id ${skippedNoImdb[type]}`,
     );

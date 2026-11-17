@@ -1,6 +1,10 @@
-// The universe U per type: union of two TMDB discover queries, deduplicated by TMDB id.
+// TMDB discovery passes. For each type, queries (a) and (b) are run once per sort order:
 //   (a) genres 99 AND 80 (Documentary + Crime)
 //   (b) genre 99 + keyword 33722 ("true crime")
+// Passes (up to 10 pages each, per query):
+//   P   popularity.desc               -> Trending padding and Trending membership
+//   N   release date desc, <= today   -> the New catalogue
+//   V   vote_count.desc               -> the Popular catalogue
 // kind is 'movie' or 'tv' (TMDB naming); Stremio types are mapped in meta.js.
 
 export const KEYWORD_ID = 33722;
@@ -36,13 +40,14 @@ export function normalize(kind, raw) {
   };
 }
 
+export const PASS_SORT = {
+  popularity: () => 'popularity.desc',
+  new: (kind) => (kind === 'movie' ? 'primary_release_date.desc' : 'first_air_date.desc'),
+  popular: () => 'vote_count.desc',
+};
+
 async function discoverPages(client, kind, extra) {
-  const params = {
-    include_adult: 'false',
-    language: 'en-US',
-    sort_by: 'popularity.desc',
-    ...extra,
-  };
+  const params = { include_adult: 'false', language: 'en-US', ...extra };
   const first = await client.get(`/discover/${kind}`, { ...params, page: 1 });
   const last = Math.min(MAX_DISCOVER_PAGES, first.total_pages ?? 1);
   const rest = await Promise.all(
@@ -65,20 +70,41 @@ export function mergeUniverse(kind, ...lists) {
   return [...seen.values()].sort(byPopularity);
 }
 
-export async function buildUniverse(client, kind) {
+// pass: 'popularity' | 'new' | 'popular'. today: YYYY-MM-DD (used by 'new' only).
+export async function buildPass(client, kind, pass, today) {
+  const extra = { sort_by: PASS_SORT[pass](kind) };
+  if (pass === 'new') {
+    extra[kind === 'movie' ? 'primary_release_date.lte' : 'first_air_date.lte'] = today;
+  }
   const [a, b] = await Promise.all([
-    discoverPages(client, kind, { with_genres: '99,80' }),
-    discoverPages(client, kind, { with_genres: '99', with_keywords: String(KEYWORD_ID) }),
+    discoverPages(client, kind, { ...extra, with_genres: '99,80' }),
+    discoverPages(client, kind, { ...extra, with_genres: '99', with_keywords: String(KEYWORD_ID) }),
   ]);
   return mergeUniverse(kind, a, b);
 }
 
-// TMDB TV/movie ids in trending order (pages 1..20).
-export async function fetchTrendingIds(client, kind) {
+// Raw trending results in trending order (pages 1..20).
+export async function fetchTrending(client, kind) {
   const pages = await Promise.all(
     Array.from({ length: MAX_TRENDING_PAGES }, (_, i) =>
       client.get(`/trending/${kind}/week`, { page: i + 1, language: 'en-US' }),
     ),
   );
-  return pages.flatMap((p) => (p.results ?? []).map((r) => r.id));
+  return pages.flatMap((p) => p.results ?? []);
+}
+
+// Trending membership: genre_ids contain both 99 and 80, or the id is in the union of the
+// three passes. Needs a poster. Trending order kept, duplicates dropped.
+export function qualifyTrending(kind, rawList, unionIds) {
+  const seen = new Set();
+  const out = [];
+  for (const raw of rawList) {
+    if (!raw?.poster_path || seen.has(raw.id)) continue;
+    const g = raw.genre_ids ?? [];
+    if ((g.includes(99) && g.includes(80)) || unionIds.has(raw.id)) {
+      seen.add(raw.id);
+      out.push(normalize(kind, raw));
+    }
+  }
+  return out;
 }
