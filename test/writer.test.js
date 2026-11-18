@@ -11,7 +11,7 @@ const metas = (n, prefix = 'tt') =>
   Array.from({ length: n }, (_, i) => ({ id: `${prefix}${i}`, type: 'movie', name: `n${i}` }));
 const cats = (n) => ({
   movie: { 'tc-trending': metas(n), 'tc-new': metas(n) },
-  series: { 'tc-trending': metas(n), 'tc-new': metas(n) },
+  series: { 'tc-trending': metas(n), 'tc-recent': metas(n) },
 });
 const plan = (n) =>
   planOutput({
@@ -28,7 +28,7 @@ test('manifest shape', () => {
   assert.equal(m.name, 'True Crime Documentaries');
   assert.deepEqual(m.resources, ['catalog']);
   assert.deepEqual(m.types, ['movie', 'series']);
-  assert.equal(m.catalogs.length, 5); // 2 movie + 2 series + series tc-recent
+  assert.equal(m.catalogs.length, 4); // 2 movie + series tc-recent and tc-trending
   assert.ok(!('addonCatalogs' in m) && !('idPrefixes' in m));
 });
 
@@ -37,7 +37,7 @@ test('no tc-popular anywhere in the manifest or the planned files', () => {
   assert.ok(!JSON.stringify(m).includes('tc-popular'));
   assert.ok(!JSON.stringify(m).toLowerCase().includes('popular'));
   assert.deepEqual(m.catalogs.map((c) => `${c.type}/${c.id}`), [
-    'movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new', 'series/tc-recent',
+    'movie/tc-trending', 'movie/tc-new', 'series/tc-recent', 'series/tc-trending',
   ]);
   const files = plan(30);
   assert.ok([...files.keys()].every((k) => !k.includes('popular')));
@@ -48,9 +48,9 @@ test('catalogue ids, names, types and extra', () => {
   const m = buildManifest('1.0.0');
   for (const type of ['movie', 'series']) {
     const mine = m.catalogs.filter((c) => c.type === type);
-    // tc-recent ("New episodes") is series only and comes after tc-new
-    assert.deepEqual(mine.map((c) => c.id), type === 'series' ? ['tc-trending', 'tc-new', 'tc-recent'] : ['tc-trending', 'tc-new']);
-    assert.deepEqual(mine.map((c) => c.name), type === 'series' ? ['Trending this week', 'New', 'New episodes'] : ['Trending this week', 'New']);
+    // series: New episodes first, then Trending, no series tc-new; movies: Trending then New
+    assert.deepEqual(mine.map((c) => c.id), type === 'series' ? ['tc-recent', 'tc-trending'] : ['tc-trending', 'tc-new']);
+    assert.deepEqual(mine.map((c) => c.name), type === 'series' ? ['New episodes', 'Trending this week'] : ['Trending this week', 'New']);
   }
   for (const c of m.catalogs) assert.deepEqual(c.extra, [{ name: 'skip' }]); // no search, no genre
 });
@@ -65,7 +65,7 @@ const skips = (files, type = 'movie', id = 'tc-new') =>
 test('base, skip=100 and skip=200 keep their old content for a 300 list', () => {
   const files = plan(300);
   for (const type of ['movie', 'series']) {
-    for (const id of ['tc-trending', 'tc-new']) {
+    for (const id of type === 'series' ? ['tc-trending', 'tc-recent'] : ['tc-trending', 'tc-new']) {
       const all = cats(300)[type][id];
       const json = (m) => JSON.stringify({ metas: m }) + '\n';
       assert.equal(files.get(`catalog/${type}/${id}.json`), json(all.slice(0, 100)));
@@ -161,8 +161,21 @@ test('index.html carries the TMDB attribution line and install link code', () =>
 test('failure rule: any catalogue under 20 throws and names it', () => {
   assert.doesNotThrow(() => assertMinimums(cats(20)));
   const c = cats(50);
-  c.series['tc-new'] = metas(19);
-  assert.throws(() => assertMinimums(c), (e) => e instanceof BuildError && /series\/tc-new=19/.test(e.message));
+  c.movie['tc-new'] = metas(19);
+  assert.throws(() => assertMinimums(c), (e) => e instanceof BuildError && /movie\/tc-new=19/.test(e.message));
+  // series tc-recent is exempt, and series needs no tc-new
+  const d = cats(50);
+  d.series['tc-recent'] = metas(3);
+  assert.doesNotThrow(() => assertMinimums(d));
+  delete d.series['tc-recent'];
+  assert.doesNotThrow(() => assertMinimums(d));
+  d.series['tc-trending'] = metas(19);
+  assert.throws(() => assertMinimums(d), (e) => e instanceof BuildError && /series\/tc-trending=19/.test(e.message));
+  // no series tc-new file is planned even if a caller passes the list
+  const e2 = cats(30);
+  e2.series['tc-new'] = metas(30);
+  const planned = planOutput({ version: '1', builtAt: 'x', catalogs: e2, skippedNoImdb: {}, padded: {}, newestNew: {}, contributions: {} });
+  assert.ok([...planned.keys()].every((k) => !k.includes('series/tc-new')));
   assert.throws(() => assertMinimums({ movie: {}, series: {} }), BuildError);
 });
 

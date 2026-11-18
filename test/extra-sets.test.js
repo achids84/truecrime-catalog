@@ -111,7 +111,7 @@ test('movie and tv pools grow: tc-new and tc-recent contain extra-set titles, ex
   const cOff = (await read(off, 'status.json')).counts;
   const cOn = (await read(on, 'status.json')).counts;
   assert.ok(cOn['movie/tc-new'] > cOff['movie/tc-new']);
-  assert.ok(cOn['series/tc-new'] > cOff['series/tc-new']);
+  assert.equal(cOn['series/tc-new'], undefined);
   assert.ok(cOn['series/tc-recent'] >= cOff['series/tc-recent']);
   assert.equal(cOn['movie/tc-trending'], cOff['movie/tc-trending']);
   assert.equal(cOn['series/tc-trending'], cOff['series/tc-trending']);

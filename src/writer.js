@@ -11,9 +11,12 @@ export const CATALOGS = [
   { id: 'tc-trending', name: 'Trending this week' },
   { id: 'tc-new', name: 'New' },
 ];
-// Series only, listed after tc-new. Not part of the 20-item failure rule (it may legitimately be short).
+// Series only, listed first. Not part of the 20-item failure rule (it may legitimately be short).
+// Since 0.1.7 the Series tab is [tc-recent, tc-trending]; there is no series tc-new output.
 export const RECENT_CATALOG = { id: 'tc-recent', name: 'New episodes' };
-export const catalogsFor = (type) => (type === 'series' ? [...CATALOGS, RECENT_CATALOG] : CATALOGS);
+export const catalogsFor = (type) => (type === 'series' ? [RECENT_CATALOG, CATALOGS[0]] : CATALOGS);
+// Catalogues that must reach MIN_ITEMS.
+const REQUIRED = { movie: ['tc-trending', 'tc-new'], series: ['tc-trending'] };
 export const TMDB_ATTRIBUTION =
   'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
@@ -38,9 +41,9 @@ export function buildManifest(version) {
 export function assertMinimums(catalogs, min = MIN_ITEMS) {
   const short = [];
   for (const type of TYPES) {
-    for (const c of CATALOGS) {
-      const n = catalogs?.[type]?.[c.id]?.length ?? 0;
-      if (n < min) short.push(`${type}/${c.id}=${n}`);
+    for (const id of REQUIRED[type]) {
+      const n = catalogs?.[type]?.[id]?.length ?? 0;
+      if (n < min) short.push(`${type}/${id}=${n}`);
     }
   }
   if (short.length) {
@@ -78,7 +81,7 @@ export function renderIndexHtml() {
 </head>
 <body>
 <h1>True Crime Documentaries</h1>
-<p>A Stremio addon with true crime documentaries, as movies and series. Each type has two catalogues: Trending this week and New.</p>
+<p>A Stremio addon with true crime documentaries, as movies and series. Movies have Trending this week and New; series have New episodes and Trending this week.</p>
 <p><a class="btn" id="install" href="#">Install in Stremio</a></p>
 <p>Or paste this manifest URL into Stremio's addon search box:<br><code id="url"></code></p>
 <script>

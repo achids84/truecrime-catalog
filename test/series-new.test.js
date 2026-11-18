@@ -246,8 +246,8 @@ test('build: a failed /tv lookup degrades, never fails the build or drops a titl
   const status = await read(bad, 'status.json');
   assert.equal(status.seriesNew.lookupsFailed, 692);
   assert.equal(status.seriesNew.recentKeyFromFirst, 100); // every key fell back
-  // the failed lookups did not drop any title from tc-new, which does not use them
-  assert.deepEqual(await allOf(bad, 'series', 'tc-new'), await allOf(ok, 'series', 'tc-new'));
+  // the failed lookups did not change tc-trending, which does not use them
+  assert.deepEqual(await allOf(bad, 'series', 'tc-trending'), await allOf(ok, 'series', 'tc-trending'));
 
   // a cached entry is used when the refresh fails: id 2001 is cached with a very new date
   const warm = await setup();
@@ -261,10 +261,13 @@ test('build: a failed /tv lookup degrades, never fails the build or drops a titl
   assert.equal(JSON.parse(await readFile(warm.tvDatesPath, 'utf8'))[2001].checkedAt, '2026-11-01'); // untouched
 });
 
-test('tc-new series is what main builds: the New pass by first air date, with the recent pass active', async () => {
+test('movie tc-new is what main builds, and there is no series tc-new file at all', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()));
-  const series = await allOf(p, 'series', 'tc-new');
+  const series = await allOf(p, 'movie', 'tc-new');
+  const all = (await readdir(p.distDir, { recursive: true })).map((f) => f.replaceAll('\\', '/'));
+  assert.ok(!all.some((f) => f.startsWith('catalog/series/tc-new')));
+  assert.ok(all.includes('catalog/series/tc-recent.json') && all.includes('catalog/series/tc-trending.json'));
   assert.equal(series.length, 288);
   // main's rule, computed independently: pass N ids with an IMDb id, first air date desc, popularity (id/1000) breaks ties
   const date = (id) => `2026-11-${String(1 + (id % 17)).padStart(2, '0')}`;
@@ -273,9 +276,7 @@ test('tc-new series is what main builds: the New pass by first air date, with th
     .sort((a, b) => (date(a) < date(b) ? 1 : date(a) > date(b) ? -1 : b - a))
     .map((id) => `tt${1000000 + id}`);
   assert.deepEqual(series.map((m) => m.id), expected);
-  assert.ok(series.every((m) => Number(tmdbIdOf(m)) < 2000)); // nothing from the recent pass
-  // and it is the same list as the movie side, which has no lookups at all
-  assert.deepEqual((await allOf(p, 'movie', 'tc-new')).map((m) => m.id), expected);
+  assert.ok(series.every((m) => Number(tmdbIdOf(m)) < 2000));
 });
 
 test('tc-trending and every movie file are unaffected by tv lookups, the recent pass and tc-recent', async () => {
@@ -283,10 +284,10 @@ test('tc-trending and every movie file are unaffected by tv lookups, the recent 
   const b = await setup();
   await run(a, mockFetch(fakeTmdb()));
   await run(b, mockFetch(fakeTmdb({ failTv: 500 })));
-  const files = async (d) => (await readdir(d, { recursive: true })).filter((f) => /^catalog[\\/](movie|series[\\/]tc-(trending|new))/.test(f) && f.endsWith('.json')).sort();
+  const files = async (d) => (await readdir(d, { recursive: true })).filter((f) => /^catalog[\\/](movie|series[\\/]tc-trending)/.test(f) && f.endsWith('.json')).sort();
   const fa = await files(a.distDir);
   assert.deepEqual(fa, await files(b.distDir));
-  assert.ok(fa.length > 50);
+  assert.ok(fa.length > 30 && fa.some((f) => f.includes('series')) && fa.every((f) => !f.includes('series/tc-new')));
   for (const rel of fa) {
     assert.equal(await readFile(join(a.distDir, rel), 'utf8'), await readFile(join(b.distDir, rel), 'utf8'), rel);
   }
@@ -310,13 +311,13 @@ test('tc-recent page files follow the writer rules; other catalogues keep their 
   assert.equal((await read(p, 'catalog/series/tc-recent/skip=100.json')).metas.length, 0);
   assert.equal((await read(p, 'catalog/series/tc-recent.json')).metas.length, 100);
   assert.equal((await read(p, 'catalog/series/tc-recent/skip=10.json')).metas.length, 90);
-  // tc-new (288): skip=10..280 and the empty skip=100/200 are inside that range
-  const newNames = await names('tc-new');
+  // movie tc-new (288) keeps its pages: skip=10..280
+  const newNames = (await readdir(join(p.distDir, 'catalog', 'movie', 'tc-new'))).sort();
   assert.equal(newNames.length, 28);
   assert.ok(newNames.includes('skip=280.json') && !newNames.includes('skip=290.json'));
   const manifest = await read(p, 'manifest.json');
   assert.deepEqual(manifest.catalogs.filter((c) => c.type === 'series').map((c) => [c.id, c.name]), [
-    ['tc-trending', 'Trending this week'], ['tc-new', 'New'], ['tc-recent', 'New episodes'],
+    ['tc-recent', 'New episodes'], ['tc-trending', 'Trending this week'],
   ]);
   assert.equal(manifest.version, '9.9.9');
 });
@@ -384,15 +385,15 @@ test('build: a Cinemeta failure falls back to TMDB dates, drops nothing, and fai
   assert.equal(JSON.parse(await readFile(warm.tvDatesPath, 'utf8'))[2001].cinemeta_last, '2026-11-17');
 });
 
-test('tc-new, tc-trending and movie files are the same whatever Cinemeta says', async () => {
+test('tc-trending and movie files are the same whatever Cinemeta says', async () => {
   const a = await setup();
   const b = await setup();
   await run(a, mockFetch(fakeTmdb({ failCinemeta: 500 })));
   await run(b, mockFetch(fakeTmdb({ cinemeta: () => [vid(1, '2026-11-17T06:00:00Z')] })));
   const files = async (d) =>
-    (await readdir(d, { recursive: true })).filter((f) => /^catalog[\\/](movie|series[\\/]tc-(trending|new))/.test(f) && f.endsWith('.json')).sort();
+    (await readdir(d, { recursive: true })).filter((f) => /^catalog[\\/](movie|series[\\/]tc-trending)/.test(f) && f.endsWith('.json')).sort();
   const fa = await files(a.distDir);
   assert.deepEqual(fa, await files(b.distDir));
-  assert.ok(fa.length > 50);
+  assert.ok(fa.length > 30 && fa.some((f) => f.includes('series')) && fa.every((f) => !f.includes('series/tc-new')));
   for (const rel of fa) assert.equal(await readFile(join(a.distDir, rel), 'utf8'), await readFile(join(b.distDir, rel), 'utf8'), rel);
 });

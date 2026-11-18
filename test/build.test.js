@@ -42,9 +42,9 @@ test('end to end with mocked TMDB: files, counts, sorting, trending', async () =
 
   // new status fields: newest release date in New, and per catalogue pass contributions
   assert.deepEqual(status.newestNew, { movie: '2026-11-17', series: '2026-11-17' });
+  assert.deepEqual(status.contributions['movie/tc-new'], { P: 0, New: 288, genreRule: 0 });
+  assert.equal(status.contributions['series/tc-new'], undefined); // no series tc-new since 0.1.7
   for (const type of ['movie', 'series']) {
-    // tc-new is the same for both types: the recent pass never feeds it (ADDON-5c)
-    assert.deepEqual(status.contributions[`${type}/tc-new`], { P: 0, New: 288, genreRule: 0 });
     assert.equal(status.contributions[`${type}/tc-popular`], undefined);
     // 38 P hits, the New-pass title 1001, and id 5001 admitted by the genre rule alone
     assert.deepEqual(status.contributions[`${type}/tc-trending`], { P: 38, New: 1, genreRule: 1 });
@@ -122,9 +122,9 @@ test('dist/ has no tc-popular file or mention, and status.json has no Popular ke
     assert.ok(!(await readFile(file, 'utf8')).includes('tc-popular'), file);
   }
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
-  assert.equal(manifest.catalogs.length, 5);
+  assert.equal(manifest.catalogs.length, 4);
   const status = JSON.parse(await readFile(join(p.distDir, 'status.json'), 'utf8'));
-  assert.deepEqual(Object.keys(status.counts), ['movie/tc-trending', 'movie/tc-new', 'series/tc-trending', 'series/tc-new', 'series/tc-recent']);
+  assert.deepEqual(Object.keys(status.counts), ['movie/tc-trending', 'movie/tc-new', 'series/tc-recent', 'series/tc-trending']);
   assert.deepEqual(Object.keys(status.contributions).sort(), Object.keys(status.counts).sort());
   assert.ok(!JSON.stringify(status).toLowerCase().includes('popular'));
 });
@@ -206,11 +206,11 @@ test('redactor replaces the token in any string', () => {
   assert.equal(redactor('')('plain'), 'plain');
 });
 
-test('manifest version comes from package.json (0.1.6: trafficking sets, exclusion list)', async () => {
+test('manifest version comes from package.json (0.1.7: series tabs are New episodes then Trending)', async () => {
   const p = await setup();
   await run(p, mockFetch(fakeTmdb()), { version: undefined });
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   const manifest = JSON.parse(await readFile(join(p.distDir, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '0.1.6');
+  assert.equal(pkg.version, '0.1.7');
 });
