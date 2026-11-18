@@ -63,6 +63,7 @@ test('an excluded id never appears in any list or skip page, either type', async
   for (const type of ['movie', 'series']) {
     for (const cat of ['tc-new', 'tc-trending', 'tc-recent']) {
       if (type === 'movie' && cat === 'tc-recent') continue;
+      if (type === 'series' && cat === 'tc-new') continue; // not output since 0.1.7
       const ids = await allIds(p, type, cat);
       assert.ok(ids.length > 0, `${type}/${cat} not empty`);
       for (const id of gone[type]) assert.ok(!ids.includes(id), `${type}/${cat} still has ${id}`);
