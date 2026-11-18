@@ -4672,7 +4672,7 @@
     "last_air_date": "2026-11-08",
     "status": "Returning Series",
     "checkedAt": "2026-11-18",
-    "cinemeta_last": "2026-11-15",
+    "cinemeta_last": "2026-11-08",
     "cinemetaCheckedAt": "2026-11-18"
   },
   "339934": {
@@ -4734,7 +4734,7 @@
     "last_air_date": null,
     "status": "Returning Series",
     "checkedAt": "2026-11-18",
-    "cinemeta_last": "2026-11-12",
+    "cinemeta_last": null,
     "cinemetaCheckedAt": "2026-11-18"
   },
   "341769": {
@@ -4757,6 +4757,14 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-18",
     "cinemeta_last": "2026-11-13",
+    "cinemetaCheckedAt": "2026-11-18"
+  },
+  "342468": {
+    "first_air_date": "2026-11-11",
+    "last_air_date": "2026-11-11",
+    "status": "Returning Series",
+    "checkedAt": "2026-11-18",
+    "cinemeta_last": "2026-11-11",
     "cinemetaCheckedAt": "2026-11-18"
   }
 }
