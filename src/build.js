@@ -136,18 +136,19 @@ export async function runBuild({
     };
     newestNew[type] = newItems[0]?.date ?? null;
     contribution[`${type}/tc-trending`] = contributions(trend.items, passSets);
-    contribution[`${type}/tc-new`] = contributions(newItems, poolSets);
-    catalogs[type] = {
-      'tc-trending': toMetas(trend.items),
-      'tc-new': toMetas(newItems),
-    };
+    catalogs[type] = { 'tc-trending': toMetas(trend.items) };
+    if (kind === 'movie') {
+      // Series tc-new is no longer output (0.1.7); its pools still feed tc-recent.
+      contribution[`${type}/tc-new`] = contributions(newItems, poolSets);
+      catalogs[type]['tc-new'] = toMetas(newItems);
+    }
     if (recent) {
       catalogs[type]['tc-recent'] = toMetas(recent.items);
       contribution[`${type}/tc-recent`] = contributions(recent.items, { ...poolSets, Recent: new Set([...R, ...XR].map((it) => it.id)) });
     }
     log(
       `${type}: trending ${catalogs[type]['tc-trending'].length} (padded ${trend.padded}), ` +
-        `new ${catalogs[type]['tc-new'].length}, ` +
+        (catalogs[type]['tc-new'] ? `new ${catalogs[type]['tc-new'].length}, ` : '') +
         `skipped no IMDb id ${skippedNoImdb[type]}`,
     );
     if (kind === 'tv') {
