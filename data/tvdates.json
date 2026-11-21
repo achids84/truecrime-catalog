@@ -124,7 +124,7 @@
     "last_air_date": "2026-10-07",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": "2026-11-04",
+    "cinemeta_last": "2026-11-18",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "12258": {
@@ -1303,7 +1303,7 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2020-03-15",
-    "cinemetaCheckedAt": "2026-11-20"
+    "cinemetaCheckedAt": "2026-11-21"
   },
   "99735": {
     "first_air_date": "2019-10-07",
@@ -1551,7 +1551,7 @@
   },
   "110709": {
     "first_air_date": "2020-09-28",
-    "last_air_date": "2026-11-09",
+    "last_air_date": "2026-11-16",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2026-11-09",
@@ -1766,7 +1766,7 @@
     "last_air_date": "2026-10-24",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": "2026-11-07",
+    "cinemeta_last": "2026-11-14",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "120368": {
@@ -2057,7 +2057,7 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2024-07-04",
-    "cinemetaCheckedAt": "2026-11-20"
+    "cinemetaCheckedAt": "2026-11-21"
   },
   "138999": {
     "first_air_date": "2021-11-24",
@@ -2294,7 +2294,7 @@
     "last_air_date": "2026-11-14",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": "2026-11-15",
+    "cinemeta_last": "2026-11-21",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "204774": {
@@ -2385,7 +2385,7 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2022-03-29",
-    "cinemetaCheckedAt": "2026-11-20"
+    "cinemetaCheckedAt": "2026-11-21"
   },
   "210082": {
     "first_air_date": "2022-10-03",
@@ -2643,7 +2643,7 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2023-10-06",
-    "cinemetaCheckedAt": "2026-11-20"
+    "cinemetaCheckedAt": "2026-11-21"
   },
   "227019": {
     "first_air_date": "2010-09-11",
@@ -2777,7 +2777,7 @@
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
     "cinemeta_last": "2023-09-04",
-    "cinemetaCheckedAt": "2026-11-20"
+    "cinemetaCheckedAt": "2026-11-21"
   },
   "234700": {
     "first_air_date": "2023-10-06",
@@ -2894,7 +2894,7 @@
     "last_air_date": "2026-10-22",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": "2026-11-05",
+    "cinemeta_last": "2026-11-19",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "245235": {
@@ -4848,7 +4848,7 @@
     "last_air_date": "2026-11-10",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": "2026-11-10",
+    "cinemeta_last": null,
     "cinemetaCheckedAt": "2026-11-21"
   },
   "340159": {
@@ -4856,7 +4856,7 @@
     "last_air_date": "2026-10-26",
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": null,
+    "cinemeta_last": "2026-11-02",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "340276": {
@@ -4864,7 +4864,7 @@
     "last_air_date": null,
     "status": "Returning Series",
     "checkedAt": "2026-11-21",
-    "cinemeta_last": null,
+    "cinemeta_last": "2026-11-20",
     "cinemetaCheckedAt": "2026-11-21"
   },
   "340285": {
